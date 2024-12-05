@@ -1,5 +1,6 @@
 FROM ubuntu:24.04 AS base
-SHELL ["/bin/bash", "-e", "-c"]
+# shell is not supported in OCI image format
+#SHELL ["/bin/bash", "-e", "-c"]
 
 # configuration
 ENV TZ="America/Vancouver"
