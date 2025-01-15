@@ -1,4 +1,6 @@
 from setuptools import find_packages, setup
+from glob import glob
+import os
 
 package_name = 'vision_stereo_hand_tracking'
 
@@ -10,6 +12,8 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        # include parameter files
+        (os.path.join('share', package_name, 'parameters'), glob(os.path.join('parameters', '*.dat'))),
     ],
     install_requires=['setuptools'],
     zip_safe=True,

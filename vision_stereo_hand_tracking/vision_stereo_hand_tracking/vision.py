@@ -2,7 +2,7 @@ import cv2
 import mediapipe as mp
 import numpy as np
 import multiprocessing
-from utils import DLT, get_projection_matrix, write_keypoints_to_disk
+from vision_stereo_hand_tracking.utils import DLT, get_projection_matrix
 
 class HandTracking(multiprocessing.Process):
     def __init__(self, camera0, camera1):
@@ -41,8 +41,8 @@ class HandTracking(multiprocessing.Process):
         # set camera 1
         cap1 = cv2.VideoCapture(self.cam1, cv2.CAP_V4L2)
         cap1.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
-        cap1.set(cv2.CAP_PROP_FRAME_WIDTH, self.resolution[0])
-        cap1.set(cv2.CAP_PROP_FRAME_HEIGHT, self.resolution[1])
+        cap1.set(cv2.CAP_PROP_FRAME_WIDTH, self.resolution[1])
+        cap1.set(cv2.CAP_PROP_FRAME_HEIGHT, self.resolution[0])
         cap1.set(cv2.CAP_PROP_FPS, 30)
 
         # wait for cameras
