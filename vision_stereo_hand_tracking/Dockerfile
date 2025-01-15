@@ -1,4 +1,4 @@
-FROM ghcr.io/amidg/opencv_gpu:latest
+FROM ghcr.io/amidg/ros2_cv:latest
 
 # create virtual environment
 ENV VIRTUAL_ENV=/opt/tf
@@ -9,5 +9,5 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 RUN python3 -m pip install -U pip && \
     python3 -m pip install -U tensorflow[and-cuda] mediapipe
 
-RUN echo "source /opt/tf/bin/activate" >> ~/.bashrc
-ENTRYPOINT ["bash"]
+# make sure colcon ignores
+RUN touch ./venv/COLCON_IGNORE
