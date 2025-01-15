@@ -28,4 +28,4 @@ float32 confidence
 # 18 = pinky_pip
 # 19 = pinky_dip
 # 20 = pinky_tip
-geometry_msgs/Point32[20] fingers
+geometry_msgs/Point32[21] fingers

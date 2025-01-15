@@ -55,3 +55,6 @@ dkms.conf
 build/
 install/
 log/
+
+# python stuff
+__pycache__
