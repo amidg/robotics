@@ -12,8 +12,9 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        # include parameter files
-        (os.path.join('share', package_name, 'parameters'), glob(os.path.join('parameters', '*.dat'))),
+        # include camera configuration
+        (os.path.join('share', package_name, 'config'),
+            glob(os.path.join('config', '*.dat'))),
     ],
     install_requires=['setuptools'],
     zip_safe=True,

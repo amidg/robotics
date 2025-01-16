@@ -2,27 +2,31 @@ import cv2
 import mediapipe as mp
 import numpy as np
 import multiprocessing
+from multiprocessing.shared_memory import SharedMemory
 from vision_stereo_hand_tracking.utils import DLT, get_projection_matrix
 
 class HandTracking(multiprocessing.Process):
-    def __init__(self, camera0, camera1):
+    def __init__(self, camera0, camera1, config_path):
         super().__init__()
         # camera parameters
         self.cam0 = camera0
         self.cam1 = camera1
         self.resolution = [1080, 1920] # opencv convention
-        self.P0 = get_projection_matrix(0)
-        self.P1 = get_projection_matrix(1)
+        self.P0 = get_projection_matrix(0, config_path)
+        self.P1 = get_projection_matrix(1, config_path)
 
         # data points
-        self.mutex = multiprocessing.Lock()
-        self.kpts_3d = np.empty((21, 3))
+        self.queue = multiprocessing.Queue()
         self.kpts_cam0 = []
         self.kpts_cam1 = []
 
-    def get_data(self):
-        with self.mutex:
-            return self.kpts_3d
+    def get_data(self, shm_name):
+        shm = SharedMemory(name=shm_name)
+        data = np.ndarray((21, 3), dtype=np.float32, buffer=shm.buf)
+        if not self.queue.empty():
+            np.copyto(data, self.queue.get())
+            return True
+        return False
 
     def run(self):
         # mediapipe stuff
@@ -65,9 +69,9 @@ class HandTracking(multiprocessing.Process):
 
             #crop to 1080x1080.
             #Note: camera calibration parameters are set to this resolution.If you change this, make sure to also change camera intrinsic parameters
-            #if frame0.shape[1] != self.resolution[0]:
-            #    frame0 = frame0[:,self.resolution[1]//2 - self.resolution[0]//2:self.resolution[1]//2 + self.resolution[0]//2]
-            #    frame1 = frame1[:,self.resolution[1]//2 - self.resolution[0]//2:self.resolution[1]//2 + self.resolution[0]//2]
+            if frame0.shape[1] != self.resolution[0]:
+                frame0 = frame0[:,self.resolution[1]//2 - self.resolution[0]//2:self.resolution[1]//2 + self.resolution[0]//2]
+                frame1 = frame1[:,self.resolution[1]//2 - self.resolution[0]//2:self.resolution[1]//2 + self.resolution[0]//2]
 
             # the BGR image to RGB.
             frame0 = cv2.cvtColor(frame0, cv2.COLOR_BGR2RGB)
@@ -91,11 +95,12 @@ class HandTracking(multiprocessing.Process):
                         pxl_y = int(round(frame0.shape[0]*hand_landmarks.landmark[p].y))
                         kpts = [pxl_x, pxl_y]
                         frame0_keypoints.append(kpts)
-
-            #no keypoints found in frame:
+            # if no keypoints are found
             else:
-                #if no keypoints are found, simply fill the frame data with [-1,-1] for each kpt
-                frame0_keypoints = [[-1, -1]]*21
+                # simply fill the frame data with [-1,-1] for each kpt
+                frame0_keypoints = [[-1, -1]]*2
+
+            # update keypoints container
             self.kpts_cam0.append(frame0_keypoints)
 
             #frame1 kpts
@@ -108,9 +113,9 @@ class HandTracking(multiprocessing.Process):
                         pxl_y = int(round(frame1.shape[0]*hand_landmarks.landmark[p].y))
                         kpts = [pxl_x, pxl_y]
                         frame1_keypoints.append(kpts)
-
             else:
-                #if no keypoints are found, simply fill the frame data with [-1,-1] for each kpt
+                # if no keypoints are found
+                # simply fill the frame data with [-1,-1] for each kpt
                 frame1_keypoints = [[-1, -1]]*21
             #update keypoints container
             self.kpts_cam1.append(frame1_keypoints)
@@ -129,9 +134,11 @@ class HandTracking(multiprocessing.Process):
             For real time application, this is what you want.
             Then place data into the shared memory object
             '''
-            frame_p3ds = np.array(frame_p3ds).reshape((21, 3))
-            with self.mutex:
-                self.kpts_3d = frame_p3ds
+            try:
+                frame_p3ds = np.array(frame_p3ds).reshape((21, 3))
+                self.queue.put(frame_p3ds)
+            except ValueError:
+                continue
 
             # Draw the hand annotations on the image.
             frame0.flags.writeable = True
@@ -166,7 +173,7 @@ class HandTracking(multiprocessing.Process):
 
 if __name__ == '__main__':
     import time
-    hand_tracker = HandTracking(3, 1)
+    hand_tracker = HandTracking(3, 1, "../")
     hand_tracker.start()
 
     # print data

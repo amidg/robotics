@@ -28,9 +28,9 @@ def DLT(P1, P2, point1, point2):
     #print(Vh[3,0:3]/Vh[3,3])
     return Vh[3,0:3]/Vh[3,3]
 
-def read_camera_parameters(camera_id):
+def read_camera_parameters(camera_id, config_path):
 
-    inf = open('./parameters/c' + str(camera_id) + '.dat', 'r')
+    inf = open(config_path + '/config/c' + str(camera_id) + '.dat', 'r')
 
     cmtx = []
     dist = []
@@ -48,9 +48,9 @@ def read_camera_parameters(camera_id):
 
     return np.array(cmtx), np.array(dist)
 
-def read_rotation_translation(camera_id, savefolder = './parameters/'):
+def read_rotation_translation(camera_id, config_path):
 
-    inf = open(savefolder + 'rot_trans_c'+ str(camera_id) + '.dat', 'r')
+    inf = open(config_path + '/config/rot_trans_c' + str(camera_id) + '.dat', 'r')
 
     inf.readline()
     rot = []
@@ -77,11 +77,11 @@ def _convert_to_homogeneous(pts):
     else:
         return np.concatenate([pts, [1]], axis = 0)
 
-def get_projection_matrix(camera_id):
+def get_projection_matrix(camera_id, config_path):
 
     #read camera parameters
-    cmtx, dist = read_camera_parameters(camera_id)
-    rvec, tvec = read_rotation_translation(camera_id)
+    cmtx, dist = read_camera_parameters(camera_id, config_path)
+    rvec, tvec = read_rotation_translation(camera_id, config_path)
 
     #calculate projection matrix
     P = cmtx @ _make_homogeneous_rep_matrix(rvec, tvec)[:3,:]
