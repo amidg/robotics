@@ -9,9 +9,11 @@
 
   <!-- Build dependencies -->
   <build_depend>msg_hands</build_depend>
+  <build_depend>visualization_msgs</build_depend>
 
   <!-- Runtime dependencies -->
   <exec_depend>msg_hands</exec_depend>
+  <exec_depend>visualization_msgs</exec_depend>
 
   <!-- Testing dependencies -->
   <test_depend>ament_copyright</test_depend>

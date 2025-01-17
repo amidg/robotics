@@ -16,9 +16,10 @@ class HandTracking(multiprocessing.Process):
         self.P1 = get_projection_matrix(1, config_path)
 
         # data points
-        self.queue = multiprocessing.Queue()
+        self.queue = multiprocessing.Queue(maxsize=2)
         self.kpts_cam0 = []
         self.kpts_cam1 = []
+        self.kpts_3d = np.array((21, 3), dtype=np.float32)
 
     def get_data(self, shm_name):
         shm = SharedMemory(name=shm_name)
@@ -99,6 +100,7 @@ class HandTracking(multiprocessing.Process):
             else:
                 # simply fill the frame data with [-1,-1] for each kpt
                 frame0_keypoints = [[-1, -1]]*2
+                continue
 
             # update keypoints container
             self.kpts_cam0.append(frame0_keypoints)
@@ -117,6 +119,7 @@ class HandTracking(multiprocessing.Process):
                 # if no keypoints are found
                 # simply fill the frame data with [-1,-1] for each kpt
                 frame1_keypoints = [[-1, -1]]*21
+                continue
             #update keypoints container
             self.kpts_cam1.append(frame1_keypoints)
 
@@ -135,7 +138,7 @@ class HandTracking(multiprocessing.Process):
             Then place data into the shared memory object
             '''
             try:
-                frame_p3ds = np.array(frame_p3ds).reshape((21, 3))
+                frame_p3ds = np.array(frame_p3ds, dtype=np.float32).reshape((21, 3))
                 self.queue.put(frame_p3ds)
             except ValueError:
                 continue
@@ -161,33 +164,18 @@ class HandTracking(multiprocessing.Process):
                         hand_landmarks,
                         mp_hands.HAND_CONNECTIONS
                     )
-            cv2.imshow('cam1', frame1)
-            cv2.imshow('cam0', frame0)
+            #cv2.imshow('cam1', frame1)
+            #cv2.imshow('cam0', frame0)
 
-            if cv2.waitKey(1) & 0xFF == 27:
-                break #27 is ESC key.
+            #if cv2.waitKey(1) & 0xFF == 27:
+            #    break #27 is ESC key.
 
-        cv2.destroyAllWindows()
-        cap0.release()
-        cap1.release()
+        #cv2.destroyAllWindows()
+        #cap0.release()
+        #cap1.release()
 
 if __name__ == '__main__':
     import time
     hand_tracker = HandTracking(3, 1, "../")
     hand_tracker.start()
-
-    # print data
-    fingers = np.empty((21, 3))
-    for _ in range(10):
-        fingers = hand_tracker.get_data()
-        point = 0
-        for value in fingers:
-            print(f"Point: {point}")
-            print(f"X: {value[0]}")
-            print(f"Y: {value[1]}")
-            print(f"Z: {value[2]}")
-            point = point + 1
-        time.sleep(1)
-
-    # finish thread
     hand_tracker.join()
