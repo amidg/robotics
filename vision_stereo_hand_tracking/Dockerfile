@@ -8,7 +8,7 @@ RUN mkdir -p $GUSEVTECH_PATH
 
 RUN python3 -m pip install --break-system-packages \
     #--upgrade --upgrade-strategy only-if-needed \
-    mediapipe empy
+    mediapipe empy PyYAML
 
 # create virtual environment
 #ENV VIRTUAL_ENV=/opt/venv

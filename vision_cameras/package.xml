@@ -1,18 +1,16 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>vision_stereo_hand_tracking</name>
+  <name>vision_cameras</name>
   <version>1.0.0</version>
-  <description>Vision package that implements mediapipe for stereo hand tracking</description>
+  <description>Basic Camera package</description>
   <maintainer email="dmitrii@gusev.tech">Dmitrii Gusev</maintainer>
   <license>GNU Public License 3.0</license>
 
   <!-- Dependencies -->
-  <depend>msg_hands</depend>
-  <depend>vision_cameras</depend>
-  <depend>visualization_msgs</depend>
+  <depend>utils_python</depend>
+  <exec_depend>ros2launch</exec_depend>
 
-  <!-- Testing dependencies -->
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>
