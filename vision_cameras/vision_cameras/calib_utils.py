@@ -1,17 +1,26 @@
-import cv2 as cv
-import glob
-import numpy as np
-import sys
-from scipy import linalg
-import yaml
 import os
+import cv2
+import sys
+import yaml
+import glob
+from scipy import linalg
+import numpy as np
+
+from utils_python.files import load_yaml, save_yaml
 
 #This will contain the calibration settings from the calibration_settings.yaml file
 calibration_settings = {}
 
-#Given Projection matrices P1 and P2, and pixel coordinates point1 and point2, return triangulated 3D point.
 def DLT(P1, P2, point1, point2):
-
+    """
+    Return triangulated 3D point
+    
+    Arguments:
+    P1 -- projection matrix for first camera
+    P2 -- projection matrix for second camera
+    point1 -- pixel coordinates
+    point2 -- pixel coordinates
+    """
     A = [point1[1]*P1[2,:] - P1[1,:],
          P1[0,:] - point1[0]*P1[2,:],
          point2[1]*P2[2,:] - P2[1,:],
@@ -26,26 +35,8 @@ def DLT(P1, P2, point1, point2):
     #print(Vh[3,0:3]/Vh[3,3])
     return Vh[3,0:3]/Vh[3,3]
 
-
-#Open and load the calibration_settings.yaml file
-def parse_calibration_settings_file(filename):
-    
-    global calibration_settings
-
-    if not os.path.exists(filename):
-        print('File does not exist:', filename)
-        quit()
-    
-    print('Using for calibration settings: ', filename)
-
-    with open(filename) as f:
-        calibration_settings = yaml.safe_load(f)
-
-    #rudimentray check to make sure correct file was loaded
-    if 'camera0' not in calibration_settings.keys():
-        print('camera0 key was not found in the settings file. Check if correct calibration_settings.yaml file was passed')
-        quit()
-
+def get_calibration_settings(filename):
+    return load_yaml('vision_cameras', filename)
 
 #Open camera stream and save frames
 def save_frames_single_camera(camera_name):

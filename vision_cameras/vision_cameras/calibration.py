@@ -13,24 +13,31 @@ class Calibration(Node):
         self.config_path = get_package_share_directory('vision_cameras')
         super().__init__(self.node_name)
 
-    def run_calibration(self):
-        # create camera
-        stereo = StereoCamera(3, 1, "stereo_example")
-        stereo.start()
+        # cameras
+        self.stereo = StereoCamera(3, 1, "stereo_example")
 
+        # variables
+        self.cmd_start = False
+
+    def run_calibration(self):
+        # start stereo camera
+        self.get_logger().info("Starting Calibration process...")
+        self.stereo.start()
+
+        # process frames
 
 
         # example 2
-        frame = np.ndarray(stereo.get_resolution())
+        frame = np.ndarray(self.stereo.get_resolution())
         while True:
-            cv2.imshow("camera 1", stereo.get_frame(1))
-            cv2.imshow("camera 2", stereo.get_frame(2))
+            cv2.imshow("camera 1", self.stereo.get_frame(1))
+            cv2.imshow("camera 2", self.stereo.get_frame(2))
             if cv2.waitKey(1) & 0xFF == 27:
-                stereo.stop()
+                self.stereo.stop()
                 break #27 is ESC key.
 
         cv2.destroyAllWindows()
-        stereo.join()
+        self.stereo.join()
 
 
 def main(args=None):

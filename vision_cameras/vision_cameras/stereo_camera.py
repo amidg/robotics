@@ -45,9 +45,16 @@ class StereoCamera(threading.Thread):
     def get_fps(self):
         return self.fps
 
-    def get_frame(self, cam):
-        if cam == 1:
+    def get_frame(self, cam=0):
+        # return concatenated frames
+        if cam == 0:
+            frame1 = self.cam1.get_frame()
+            frame2 = self.cam2.get_frame()
+            return np.hstack((frame1, frame2))
+        # return first camera fame
+        elif cam == 1:
             return self.cam1.get_frame()
+        # return second camera frame
         elif cam == 2:
             return self.cam2.get_frame()
 
@@ -70,8 +77,7 @@ if __name__ == '__main__':
     # example 2
     frame = np.ndarray(stereo.get_resolution())
     while True:
-        cv2.imshow("camera 1", stereo.get_frame(1))
-        cv2.imshow("camera 2", stereo.get_frame(2))
+        cv2.imshow("stereo camera", stereo.get_frame())
         if cv2.waitKey(1) & 0xFF == 27:
             stereo.stop()
             break #27 is ESC key.

@@ -1,0 +1,27 @@
+# TODO:
+# - Introduce .env file for configurations
+services:
+  # vision cameras nodes
+  vision_cameras_dev:
+    extends:
+      file: base.yaml
+      service: base_gui_dev
+    profiles:
+      - vision_cameras
+    build:
+      context: ./vision_cameras
+      dockerfile: Dockerfile
+      target: dev
+      args:
+        - GUSEVTECH_PATH=/opt/gusevtech
+    container_name: vision_cameras
+    environment:
+      GUSEVTECH_PATH: /opt/gusevtech
+      COLCON_BUILD_PATH: /opt/gusevtech/build
+      COLCON_INSTALL_PATH: /opt/gusevtech/install
+      COLCON_LOG_PATH: /opt/gusevtech/log
+    volumes:
+      # cameras
+      - /dev:/dev
+      # application data
+      - ./:/app:z

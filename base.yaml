@@ -1,0 +1,17 @@
+services:
+  # base dev node
+  base_dev: &base_dev
+    command: bash
+    tty: true
+    network_mode: pasta
+    security_opt:
+      - label=type:container_runtime_t
+    stop_grace_period: 5s # before SIGKILL
+
+  # base gui dev node
+  base_gui_dev:
+    <<: *base_dev
+    environment:
+      - DISPLAY
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:ro
