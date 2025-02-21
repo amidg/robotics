@@ -1,0 +1,15 @@
+FROM dustynv/ros:foxy-ros-core-l4t-r35.4.1 AS base
+
+# install necessary dependencies
+RUN sudo apt update -y && \
+    sudo apt install -y \
+	python3-rosdep \
+	python3-colcon-common-extensions \
+	make \
+	ros-foxy-diagnostic-updater \
+	ros-foxy-xacro \
+	ros-foxy-joy-teleop \
+        ros-foxy-robot-state-publisher
+
+# make foxy setup required
+RUN echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
