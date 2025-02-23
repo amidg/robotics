@@ -1,27 +1,37 @@
 services:
-  # base jetson container
-  base_nvidia: &base_nvidia
-    profiles:
-      - null_nvidia
-    runtime: nvidia
-    tty: true
-    stdin_open: true
-
   # lilpleb controls container
-  # designed to run on the Jetson Xavier NX
   lilpleb_create_node:
-    <<: *base_nvidia
     profiles:
       - lilpleb
+    extends:
+      file: base.yaml
+      service: base_nvidia
     build:
       context: ./3rdparty
       dockerfile: Dockerfile.create
       target: base
     container_name: lilpleb_create_node
     privileged: true
-    network_mode: host
     volumes:
+      # ros packages
       - ./3rdparty/create_robot:/app/src/create_robot
       - ./3rdparty/libcreate:/app/src/libcreate
       # for the tty access
       - /dev:/dev
+
+  # robotics simulation container
+  lilpleb_simulation:
+    profiles:
+      - lilpleb_sim
+    extends:
+      file: base.yaml
+      service: base_gui
+    image: ghcr.io/amidg/ros2:latest
+    container_name: lilpleb_simulation
+    devices:
+      - /dev/input/js0
+    annotations:
+      - run.oci.keep_original_groups=1
+    volumes:
+      # ros packages
+      - ./3rdparty/joystick:/app/src/joystick:ro

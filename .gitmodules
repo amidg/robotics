@@ -4,3 +4,6 @@
 [submodule "3rdparty/libcreate"]
 	path = 3rdparty/libcreate
 	url = git@github.com:AutonomyLab/libcreate.git
+[submodule "3rdparty/joystick"]
+	path = 3rdparty/joystick
+	url = git@github.com:ros-drivers/joystick_drivers.git
