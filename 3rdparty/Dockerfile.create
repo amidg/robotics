@@ -10,6 +10,5 @@ RUN sudo apt update -y && \
 	ros-foxy-xacro \
 	ros-foxy-joy-teleop \
         ros-foxy-robot-state-publisher
-
-# make foxy setup required
-RUN echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
+WORKDIR /app
+RUN echo "source /opt/ros/foxy/install/setup.bash" >> ~/.bashrc
