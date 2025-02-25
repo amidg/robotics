@@ -9,6 +9,6 @@ RUN sudo apt update -y && \
 	ros-foxy-diagnostic-updater \
 	ros-foxy-xacro \
 	ros-foxy-joy-teleop \
-        ros-foxy-robot-state-publisher
+    ros-foxy-robot-state-publisher
 WORKDIR /app
 RUN echo "source /opt/ros/foxy/install/setup.bash" >> ~/.bashrc
