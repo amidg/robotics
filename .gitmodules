@@ -7,3 +7,6 @@
 [submodule "3rdparty/joystick"]
 	path = 3rdparty/joystick
 	url = git@github.com:ros-drivers/joystick_drivers.git
+[submodule "3rdparty/ros2_controllers"]
+	path = 3rdparty/ros2_controllers
+	url = git@github.com:ros-controls/ros2_controllers.git
