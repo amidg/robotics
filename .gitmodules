@@ -10,3 +10,6 @@
 [submodule "3rdparty/ros2_controllers"]
 	path = 3rdparty/ros2_controllers
 	url = git@github.com:ros-controls/ros2_controllers.git
+[submodule "containers/dockerfiles"]
+	path = containers/dockerfiles
+	url = https://github.com/amidg/dockerfiles.git
