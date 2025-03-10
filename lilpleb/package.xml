@@ -1,15 +1,16 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>robot_description</name>
+  <name>lilpleb</name>
   <version>0.0.1</version>
-  <description>Package with the description of all robots</description>
+  <description>LilPleb robot package</description>
   <maintainer email="dmitrii@gusev.tech">Dmitrii Gusev</maintainer>
   <license>GNU Public License 3</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>create_description</depend>
+  <depend>robot_description</depend>
   <depend>utils_python</depend>
 
   <depend>ament_index_python</depend>
@@ -29,6 +30,10 @@
   <depend>std_msgs</depend>
   <depend>velocity_controllers</depend>
   <depend>xacro</depend>
+
+  <depend>twist_mux</depend>
+  <depend>joy</depend>
+  <depend>teleop_twist_joy</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

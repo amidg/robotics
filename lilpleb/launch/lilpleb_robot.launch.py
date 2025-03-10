@@ -13,15 +13,17 @@ def generate_launch_description():
     ld = LaunchDescription()
 
     # launch packages
-    launch_package = FindPackageShare('lilpleb_simulation')
-    robot_package = FindPackageShare('create_description')
+    launch_package = FindPackageShare('robot_description')
+    robot_package = launch_package
+    #robot_package = FindPackageShare('create_description')
 
     # rviz file
     default_rviz_config_path = PathJoinSubstitution([launch_package, 'rviz', 'lilpleb.rviz'])
 
     # robot urdf
     robot_description = ParameterValue(
-        Command(['xacro ', PathJoinSubstitution([robot_package, 'urdf', 'create_2.urdf.xacro'])]),
+        #Command(['xacro ', PathJoinSubstitution([robot_package, 'urdf', 'create_2.urdf.xacro'])]),
+        Command(['xacro ', PathJoinSubstitution([robot_package, 'robots', 'lilpleb.urdf.xacro'])]),
         value_type=str
     )
 
