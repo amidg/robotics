@@ -1,12 +1,15 @@
 from launch import LaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.actions import DeclareLaunchArgument
+from launch.actions import RegisterEventHandler, SetEnvironmentVariable
 from launch.actions import IncludeLaunchDescription
 from launch.conditions import IfCondition, UnlessCondition
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, Command
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
 from launch_ros.substitutions import FindPackageShare
+
+from pathlib import Path
 
 import os
 import sys
@@ -57,6 +60,54 @@ def generate_launch_description():
     #    )
     #)
 
+    # gazebo setup
+    fws_robot_description_path = os.path.join(
+        get_package_share_directory('robot_description'))
+    fws_robot_sim_path = os.path.join(
+        get_package_share_directory('simulation'))
+    gazebo_resource_path = SetEnvironmentVariable(
+        name='GZ_SIM_RESOURCE_PATH',
+        value=[
+            os.path.join(fws_robot_sim_path, 'worlds'), ':' +
+            str(Path(fws_robot_description_path).parent.resolve())
+        ]
+    )
+
+    ld.add_action(
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([os.path.join(
+                get_package_share_directory('ros_gz_sim'), 'launch'), '/gz_sim.launch.py']),
+            launch_arguments=[
+                ('gz_args', [LaunchConfiguration('world'),
+                             '.sdf',
+                             ' -v 4',
+                             ' -r']
+                )
+            ]
+        )
+    )
+
+    gz_spawn_entity = Node(
+        package='ros_gz_sim',
+        executable='create',
+        output='screen',
+        arguments=['-string', robot_desc,
+                   '-x', '0.0',
+                   '-y', '0.0',
+                   '-z', '0.07',
+                   '-R', '0.0',
+                   '-P', '0.0',
+                   '-Y', '0.0',
+                   '-name', 'fws_robot',
+                   '-allow_renaming', 'false'],
+    )
+
+    # controllers
+
+
+
+
+
     # gazebo
     #gazebo_params_file = PathJoinSubstitution(
     #    [packages[simulation_package], 'config', 'gazebo_params.yaml'])
@@ -87,32 +138,32 @@ def generate_launch_description():
     #)
 
     # controller manager
-    robot_controllers = PathJoinSubstitution([
-        packages[robot_description_package],
-        "config",
-        "lilpleb.controllers.yaml",
-    ])
-    ld.add_action(
-        Node(
-            package="controller_manager",
-            executable="spawner",
-            arguments=["joint_state_broadcaster"],
-        )
-    )
+    #robot_controllers = PathJoinSubstitution([
+    #    packages[robot_description_package],
+    #    "config",
+    #    "lilpleb.controllers.yaml",
+    #])
+    #ld.add_action(
+    #    Node(
+    #        package="controller_manager",
+    #        executable="spawner",
+    #        arguments=["joint_state_broadcaster"],
+    #    )
+    #)
 
-    ld.add_action(
-        Node(
-            package="controller_manager",
-            executable="spawner",
-            arguments=[
-                "diffbot_base_controller",
-                "--param-file",
-                robot_controllers,
-                "--controller-ros-args",
-                "-r /diffbot_base_controller/cmd_vel:=/cmd_vel",
-            ],
-        )
-    )
+    #ld.add_action(
+    #    Node(
+    #        package="controller_manager",
+    #        executable="spawner",
+    #        arguments=[
+    #            "diffbot_base_controller",
+    #            "--param-file",
+    #            robot_controllers,
+    #            "--controller-ros-args",
+    #            "-r /diffbot_base_controller/cmd_vel:=/cmd_vel",
+    #        ],
+    #    )
+    #)
 
     # controller manager
     # diff_drive_spawner
