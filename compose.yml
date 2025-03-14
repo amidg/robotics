@@ -34,6 +34,16 @@ services:
     volumes:
       - ./:/app/src:z
 
+  # container for demo packages
+  ros_demo: &ros_demo
+    <<: *base
+    profiles:
+      - demo
+    image: ghcr.io/amidg/ros2:latest
+    container_name: ros_demo
+    volumes:
+      - ./demo:/app/src:z
+
   # lilpleb controls container
   lilpleb_create_node:
     <<: *base_nvidia

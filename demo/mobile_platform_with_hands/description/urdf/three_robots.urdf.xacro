@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="multi_robot_example">
+  <xacro:arg name="prefix" default="" />
+  <xacro:arg name="prefix_arm_right" default="arm_right_" />
+  <xacro:arg name="prefix_arm_left" default="arm_left_" />
+  <xacro:arg name="use_sim" default="false" />
+  <xacro:arg name="use_mock_hardware" default="false" />
+
+  <!-- Import Materials -->
+  <xacro:include filename="$(find ros2_control_demo_description)/rrbot/urdf/rrbot.materials.xacro" />
+
+  <!-- Import Diff Drive Robot -->
+  <xacro:include filename="$(find basic_mobile_base)/diffbot/urdf/diffbot_description.urdf.xacro" />
+
+  <xacro:include filename="$(find ros2_control_demo_example_2)/ros2_control/diffbot.ros2_control.xacro" />
+  <xacro:diffbot prefix="$(arg prefix)" />
+  <xacro:diffbot_ros2_control
+      name="DiffBot"
+      prefix="$(arg prefix)"
+      use_mock_hardware="$(arg use_mock_hardware)"/>
+
+  <!-- Import Right Arm -->
+  <xacro:include filename="$(find ros2_control_demo_description)/rrbot/urdf/rrbot_description.urdf.xacro"/>
+
+  <xacro:include filename="$(find ros2_control_demo_example_1)/ros2_control/rrbot.ros2_control.xacro"/>
+  <xacro:rrbot parent="base_link" prefix="$(arg prefix_arm_right)">
+    <origin xyz="0.35 -0.35 0.5" rpy="0 0 0" />
+  </xacro:rrbot>
+  <xacro:rrbot_ros2_control
+      name="RRBot_Right"
+      prefix="$(arg prefix_arm_right)" />
+
+  <!-- Import Left Arm -->
+  <xacro:rrbot parent="base_link" prefix="$(arg prefix_arm_left)">
+    <origin xyz="0.35 0.35 0.5" rpy="0 0 0" />
+  </xacro:rrbot>
+  <xacro:rrbot_ros2_control
+      name="RRBot_Left"
+      prefix="$(arg prefix_arm_left)" />
+
+</robot>
