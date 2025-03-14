@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!-- Multi-robot example -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="multi_robot_example">
+  <xacro:arg name="prefix" default="" />
+  <xacro:arg name="prefix_arm" default="arm_" />
+  <xacro:arg name="use_sim" default="false" />
+  <xacro:arg name="use_mock_hardware" default="false" />
+
+  <!-- Import Diff Drive Robot -->
+<xacro:include filename="$(find ros2_control_demo_description)/diffbot/urdf/diffbot_description.urdf.xacro" />
+
+  <xacro:include filename="$(find ros2_control_demo_description)/diffbot/urdf/diffbot.materials.xacro" />
+
+  <!-- Import RRBot macro -->
+  <xacro:include filename="$(find ros2_control_demo_description)/rrbot/urdf/rrbot_description.urdf.xacro" />
+  <xacro:include filename="$(find ros2_control_demo_description)/rrbot/urdf/rrbot.materials.xacro" />
+
+  <!-- Import ros2_control description -->
+  <xacro:include filename="$(find ros2_control_demo_example_2)/ros2_control/diffbot.ros2_control.xacro" />
+  <xacro:diffbot prefix="$(arg prefix)" />
+  <xacro:diffbot_ros2_control
+    name="DiffBot" prefix="$(arg prefix)" use_mock_hardware="$(arg use_mock_hardware)"/>
+
+
+  <xacro:include filename="$(find ros2_control_demo_example_1)/ros2_control/rrbot.ros2_control.xacro" />
+
+  <!-- Used for fixing robot -->
+  <link name="world"/>
+  <xacro:rrbot parent="world" prefix="$(arg prefix_arm)">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </xacro:rrbot>
+  <xacro:rrbot_ros2_control
+    name="RRBot" prefix="$(arg prefix_arm)" />
+
+</robot>
