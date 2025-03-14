@@ -1,0 +1,27 @@
+right_publisher_forward_position_controller:
+  ros__parameters:
+    publish_topic: "/right_forward_position_controller/commands"
+
+    wait_sec_between_publish: 5
+
+    # use the same positions
+    goal_names: ["pos1", "pos2", "pos3", "pos4"]
+    pos1: [0.785, 0.785]
+    pos2: [0.0, 0.0]
+    pos3: [-0.785, -0.785]
+    pos4: [0.0, 0.0]
+
+left_publisher_forward_position_controller:
+  ros__parameters:
+    publish_topic: "/left_forward_position_controller/commands"
+
+    wait_sec_between_publish: 5
+
+    # use the same positions
+    goal_names: ["pos1", "pos2", "pos3", "pos4"]
+    pos1: [0.785, 0.785]
+    pos2: [0.0, 0.0]
+    pos3: [-0.785, -0.785]
+    pos4: [0.0, 0.0]
+
+

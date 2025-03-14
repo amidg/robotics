@@ -1,21 +1,63 @@
 services:
+  # base
+  base: &base
+    profiles:
+      - null_profile
+    extends:
+      file: ./containers/dockerfiles/base.yml
+      service: base_gui
+
+  base_nvidia: &base_nvidia
+    profiles:
+      - null_profile
+    extends:
+      file: ./containers/dockerfiles/base.yml
+      service: base_nvidia
+
+  # latest ros dev container
+  ros_dev: &ros_dev
+    <<: *base
+    profiles:
+      - ros_dev
+    image: ghcr.io/amidg/ros2:latest
+    container_name: ros_dev
+    volumes:
+      - ./:/app/src:z
+
+  # latest gazebo container
+  gazebo_dev: &gazebo_dev
+    <<: *base
+    profiles:
+      - gazebo_dev
+    image: gazebo:gzserver11
+    container_name: gazebo_dev
+    volumes:
+      - ./:/app/src:z
+
+  # container for demo packages
+  ros_demo: &ros_demo
+    <<: *base
+    profiles:
+      - demo
+    image: ghcr.io/amidg/ros2:latest
+    container_name: ros_demo
+    volumes:
+      - ./demo:/app/src:z
+
   # lilpleb controls container
-  # designed to run on the Jetson Xavier NX
   lilpleb_create_node:
+    <<: *base_nvidia
     profiles:
       - lilpleb
     build:
-      context: ./3rdparty
+      context: ./containers
       dockerfile: Dockerfile.create
       target: base
     container_name: lilpleb_create_node
-    runtime: nvidia
     privileged: true
-    network_mode: host
     volumes:
-      - ./3rdparty/create_robot:/create_ws/src/create_robot
-      - ./3rdparty/libcreate:/create_ws/src/libcreate
+      # ros packages
+      - ./3rdparty/create_robot:/app/src/create_robot
+      - ./3rdparty/libcreate:/app/src/libcreate
       # for the tty access
       - /dev:/dev
-    stdin_open: true
-    tty: true

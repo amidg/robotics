@@ -4,3 +4,9 @@
 [submodule "3rdparty/libcreate"]
 	path = 3rdparty/libcreate
 	url = git@github.com:AutonomyLab/libcreate.git
+[submodule "containers/dockerfiles"]
+	path = containers/dockerfiles
+	url = https://github.com/amidg/dockerfiles.git
+[submodule "demo/ros2_control_demos"]
+	path = demo/ros2_control_demos
+	url = https://github.com/ros-controls/ros2_control_demos.git
