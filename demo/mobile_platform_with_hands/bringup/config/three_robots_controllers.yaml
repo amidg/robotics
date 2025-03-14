@@ -6,6 +6,24 @@ controller_manager:
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
+# RR Robot Right
+right_forward_position_controller:
+  ros__parameters:
+    type: forward_command_controller/ForwardCommandController
+    joints:
+      - arm_right_joint1
+      - arm_right_joint2
+    interface_name: position
+
+# RR Robot Left
+left_forward_position_controller:
+  ros__parameters:
+    type: forward_command_controller/ForwardCommandController
+    joints:
+      - arm_left_joint1
+      - arm_left_joint2
+    interface_name: position
+
 # diff robot controllers
 diffbot_base_controller:
   ros__parameters:
@@ -57,11 +75,3 @@ diffbot_base_controller:
     angular.z.min_jerk: 0.0
 
 
-# RR Robot
-forward_position_controller:
-  ros__parameters:
-    type: forward_command_controller/ForwardCommandController
-    joints:
-      - joint1
-      - joint2
-    interface_name: position

@@ -38,10 +38,7 @@ def generate_launch_description():
             PathJoinSubstitution(
                 [FindPackageShare("mobile_platform_with_hands"),
                  "urdf", "three_robots.urdf.xacro"]
-            ),
-            " ",
-            "use_mock_hardware:=",
-            use_mock_hardware,
+            )
         ]
     )
     robot_description = {"robot_description": robot_description_content}
@@ -53,6 +50,7 @@ def generate_launch_description():
             "three_robots_controllers.yaml",
         ]
     )
+
     rviz_config_file = PathJoinSubstitution(
         [FindPackageShare("ros2_control_demo_description"), "diffbot/rviz", "diffbot.rviz"]
     )
@@ -84,7 +82,7 @@ def generate_launch_description():
         arguments=["joint_state_broadcaster"],
     )
 
-    robot_controller_spawner = Node(
+    diff_controller_spawner = Node(
         package="controller_manager",
         executable="spawner",
         arguments=[
@@ -94,6 +92,18 @@ def generate_launch_description():
             "--controller-ros-args",
             "-r /diffbot_base_controller/cmd_vel:=/cmd_vel",
         ],
+    )
+
+    arm_right_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["right_forward_position_controller", "--param-file", robot_controllers],
+    )
+
+    arm_left_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["left_forward_position_controller", "--param-file", robot_controllers],
     )
 
     # Delay rviz start after `joint_state_broadcaster`
@@ -108,7 +118,7 @@ def generate_launch_description():
     # TODO(anyone): This is a workaround for flaky tests. Remove when fixed.
     delay_joint_state_broadcaster_after_robot_controller_spawner = RegisterEventHandler(
         event_handler=OnProcessExit(
-            target_action=robot_controller_spawner,
+            target_action=arm_left_controller_spawner,
             on_exit=[joint_state_broadcaster_spawner],
         )
     )
@@ -116,7 +126,9 @@ def generate_launch_description():
     nodes = [
         control_node,
         robot_state_pub_node,
-        robot_controller_spawner,
+        diff_controller_spawner,
+        arm_right_controller_spawner,
+        arm_left_controller_spawner,
         delay_rviz_after_joint_state_broadcaster_spawner,
         delay_joint_state_broadcaster_after_robot_controller_spawner,
     ]

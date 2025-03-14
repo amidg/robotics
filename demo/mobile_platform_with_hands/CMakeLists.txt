@@ -25,7 +25,7 @@ endforeach()
 
 # INSTALL
 install(
-  DIRECTORY description/ros2_control description/urdf description/rviz
+  DIRECTORY description/ros2_control description/urdf
   DESTINATION share/mobile_platform_with_hands
 )
 install(

@@ -5,10 +5,7 @@
   <version>0.0.0</version>
   <description>Demo package of `ros2_control` simulation with multiple robots.</description>
 
-  <maintainer email="denis.stogl@stoglrobotics.de">Dr.-Ing. Denis Štogl</maintainer>
-  <maintainer email="bence.magyar.robotics@gmail.com">Bence Magyar</maintainer>
-  <maintainer email="christoph.froehlich@ait.ac.at">Christoph Froehlich</maintainer>
-  <maintainer email="sai.kishor@pal-robotics.com">Sai Kishor Kothakota</maintainer>
+  <maintainer email="dmitrii.gusev@sanctuary.ai">Dmitrii Gusev</maintainer>
 
   <license>Apache-2.0</license>
 
