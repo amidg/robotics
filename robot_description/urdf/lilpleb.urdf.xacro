@@ -11,9 +11,9 @@
 
 
   <!-- ROS2 Control -->
-  <xacro:include filename="$(find robot_description)/ros2_control/lilpleb.ros2_control.xacro" />
-  <xacro:lilpleb_ros2_control
-      name="DiffBot"
+  <xacro:include filename="$(find robot_description)/controls/lilpleb.ros2_control.xacro" />
+  <xacro:lilpleb_diff_controller
+      name="LilPlebBase"
       prefix="$(arg prefix)"
       use_mock_hardware="$(arg use_mock_hardware)"/>
 

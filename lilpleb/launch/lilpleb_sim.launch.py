@@ -20,7 +20,7 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             "use_mock_hardware",
-            default_value="false",
+            default_value="true",
             description="Start robot with mock hardware mirroring command to its states.",
         )
     )
@@ -35,23 +35,24 @@ def generate_launch_description():
             PathJoinSubstitution([FindExecutable(name="xacro")]),
             " ",
             PathJoinSubstitution(
-                [FindPackageShare("mobile_platform_with_hands"),
-                 "urdf", "three_robots.urdf.xacro"]
+                [FindPackageShare("robot_description"),
+                 "urdf", "lilpleb.urdf.xacro"]
             )
         ]
     )
     robot_description = {"robot_description": robot_description_content}
 
+    # ros2 control
     robot_controllers = PathJoinSubstitution(
         [
-            FindPackageShare("mobile_platform_with_hands"),
-            "config",
-            "three_robots_controllers.yaml",
+            FindPackageShare("robot_description"),
+            "controls",
+            "lilpleb.controls.yaml",
         ]
     )
 
     rviz_config_file = PathJoinSubstitution(
-        [FindPackageShare("ros2_control_demo_description"), "diffbot/rviz", "diffbot.rviz"]
+        [FindPackageShare("lilpleb"), "rviz", "lilpleb.rviz"]
     )
 
     control_node = Node(
@@ -85,24 +86,12 @@ def generate_launch_description():
         package="controller_manager",
         executable="spawner",
         arguments=[
-            "diffbot_base_controller",
+            "lilpleb_diff_controller",
             "--param-file",
             robot_controllers,
             "--controller-ros-args",
-            "-r /diffbot_base_controller/cmd_vel:=/cmd_vel",
+            "-r /lilpleb_diff_controller/cmd_vel:=/cmd_vel",
         ],
-    )
-
-    arm_right_controller_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["right_forward_position_controller", "--param-file", robot_controllers],
-    )
-
-    arm_left_controller_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["left_forward_position_controller", "--param-file", robot_controllers],
     )
 
     # Delay rviz start after `joint_state_broadcaster`
@@ -117,7 +106,7 @@ def generate_launch_description():
     # TODO(anyone): This is a workaround for flaky tests. Remove when fixed.
     delay_joint_state_broadcaster_after_robot_controller_spawner = RegisterEventHandler(
         event_handler=OnProcessExit(
-            target_action=arm_left_controller_spawner,
+            target_action=diff_controller_spawner,
             on_exit=[joint_state_broadcaster_spawner],
         )
     )
@@ -126,8 +115,6 @@ def generate_launch_description():
         control_node,
         robot_state_pub_node,
         diff_controller_spawner,
-        arm_right_controller_spawner,
-        arm_left_controller_spawner,
         delay_rviz_after_joint_state_broadcaster_spawner,
         delay_joint_state_broadcaster_after_robot_controller_spawner,
     ]

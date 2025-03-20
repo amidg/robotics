@@ -35,7 +35,10 @@ endforeach()
 
 # INSTALL
 install(
-  DIRECTORY meshes ros2_control urdf
+  DIRECTORY
+    meshes
+    urdf
+    controls
   DESTINATION share/robot_description
 )
 
