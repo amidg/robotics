@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="lilpleb">
+  <xacro:arg name="prefix" default="" />
+  <xacro:arg name="use_sim" default="false" />
+  <xacro:arg name="use_mock_hardware" default="true" />
+
+  <!-- Base Roomba robot -->
+  <xacro:include filename="$(find create_description)/urdf/create_2.urdf.xacro" />
+
+  <!-- Attachments -->
+
+
+  <!-- ROS2 Control -->
+  <xacro:include filename="$(find robot_description)/controls/lilpleb.ros2_control.xacro" />
+  <xacro:lilpleb_diff_controller
+      name="LilPlebBase"
+      prefix="$(arg prefix)"
+      use_mock_hardware="$(arg use_mock_hardware)"/>
+
+</robot>
