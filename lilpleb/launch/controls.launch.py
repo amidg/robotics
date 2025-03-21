@@ -7,27 +7,30 @@ from launch.substitutions import Command, FindExecutable, PathJoinSubstitution, 
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
+lilpleb_package = "lilpleb"
+robot_description_package = "robot_description"
+
+# args
+rqt_joint_gui_arg = "rqt_joint_gui"
+mock_hardware_arg = "use_mock_hardware"
+
 def generate_launch_description():
+    # create LaunchConfigurations
+    gui = LaunchConfiguration(rqt_joint_gui_arg)
+    use_mock_hardware = LaunchConfiguration(mock_hardware_arg)
+
     # Declare arguments
-    declared_arguments = []
-    declared_arguments.append(
-        DeclareLaunchArgument(
-            "gui",
-            default_value="true",
-            description="Start RViz2 automatically with this launch file.",
-        )
-    )
-    declared_arguments.append(
-        DeclareLaunchArgument(
-            "use_mock_hardware",
-            default_value="true",
-            description="Start robot with mock hardware mirroring command to its states.",
-        )
+    enable_rqt_joint_pub_gui = DeclareLaunchArgument(
+        rqt_joint_gui_arg,
+        default_value="true",
+        description="Start RViz2 automatically with this launch file.",
     )
 
-    # Initialize Arguments
-    gui = LaunchConfiguration("gui")
-    use_mock_hardware = LaunchConfiguration("use_mock_hardware")
+    enable_mock_hardware = DeclareLaunchArgument(
+        mock_hardware_arg,
+        default_value="true",
+        description="Use mock hardware mirroring command to its states.",
+    )
 
     # Get URDF via xacro
     robot_description_content = Command(
@@ -35,7 +38,7 @@ def generate_launch_description():
             PathJoinSubstitution([FindExecutable(name="xacro")]),
             " ",
             PathJoinSubstitution(
-                [FindPackageShare("robot_description"),
+                [FindPackageShare(robot_description_package),
                  "urdf", "lilpleb.urdf.xacro"]
             )
         ]
@@ -45,14 +48,14 @@ def generate_launch_description():
     # ros2 control
     robot_controllers = PathJoinSubstitution(
         [
-            FindPackageShare("robot_description"),
+            FindPackageShare(robot_description_package),
             "controls",
             "lilpleb.controls.yaml",
         ]
     )
 
     rviz_config_file = PathJoinSubstitution(
-        [FindPackageShare("lilpleb"), "rviz", "lilpleb.rviz"]
+        [FindPackageShare(lilpleb_package), "rviz", "lilpleb.rviz"]
     )
 
     control_node = Node(
@@ -89,8 +92,8 @@ def generate_launch_description():
             "lilpleb_diff_controller",
             "--param-file",
             robot_controllers,
-            "--controller-ros-args",
-            "-r /lilpleb_diff_controller/cmd_vel:=/cmd_vel",
+            #"--controller-ros-args",
+            #"-r /lilpleb_diff_controller/cmd_vel:=/cmd_vel",
         ],
     )
 
@@ -111,6 +114,14 @@ def generate_launch_description():
         )
     )
 
+
+    # add launch arguments to the array
+    declared_arguments = [
+        enable_rqt_joint_pub_gui,
+        enable_mock_hardware
+    ]
+
+    # add nodes to the array
     nodes = [
         control_node,
         robot_state_pub_node,

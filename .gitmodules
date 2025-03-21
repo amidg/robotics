@@ -10,3 +10,6 @@
 [submodule "demo/ros2_control_demos"]
 	path = demo/ros2_control_demos
 	url = https://github.com/ros-controls/ros2_control_demos.git
+[submodule "3rdparty/twist_stamper_for_testing"]
+	path = 3rdparty/twist_stamper_for_testing
+	url = https://github.com/joshnewans/twist_stamper.git
