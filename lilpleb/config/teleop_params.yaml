@@ -1,4 +1,0 @@
-teleop_twist_keyboard:
-  ros__parameters:
-    stamped: true
-    frame_id: ""
