@@ -1,9 +1,6 @@
 [submodule "3rdparty/create_robot"]
 	path = 3rdparty/create_robot
 	url = git@github.com:AutonomyLab/create_robot.git
-[submodule "3rdparty/libcreate"]
-	path = 3rdparty/libcreate
-	url = git@github.com:AutonomyLab/libcreate.git
 [submodule "containers/dockerfiles"]
 	path = containers/dockerfiles
 	url = https://github.com/amidg/dockerfiles.git
