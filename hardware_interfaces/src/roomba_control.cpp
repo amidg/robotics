@@ -85,14 +85,21 @@ hardware_interface::CallbackReturn RoombaSystemHardware::on_configure(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
   // BEGIN: This part here is for exemplary purposes - Please do not copy to your production code
-  RCLCPP_INFO(get_logger(), "Configuring ...please wait...");
-
-  for (int i = 0; i < hw_start_sec_; i++)
-  {
-    rclcpp::sleep_for(std::chrono::seconds(1));
-    RCLCPP_INFO(get_logger(), "%.1f seconds left...", hw_start_sec_ - i);
-  }
+  //RCLCPP_INFO(get_logger(), "Configuring ...please wait...");
+  //for (int i = 0; i < hw_start_sec_; i++)
+  //{
+  //  rclcpp::sleep_for(std::chrono::seconds(1));
+  //  RCLCPP_INFO(get_logger(), "%.1f seconds left...", hw_start_sec_ - i);
+  //}
   // END: This part here is for exemplary purposes - Please do not copy to your production code
+
+  RCLCPP_INFO(get_logger(), "Connecting to the Roomba");
+  create::Create robot(model);
+  if (robot.connect(port, baud))
+    RCLCPP_INFO(get_logger(), "Connected to the robot!");
+  else {
+    RCLCPP_INFO(get_logger(), "Failed to connect to the robot!");
+  }
 
   // reset values always when configuring hardware
   for (const auto & [name, descr] : joint_state_interfaces_)
@@ -125,14 +132,6 @@ hardware_interface::CallbackReturn RoombaSystemHardware::on_activate(
   for (const auto & [name, descr] : joint_command_interfaces_)
   {
     set_command(name, get_state(name));
-  }
-
-  RCLCPP_INFO(get_logger(), "Connecting to the Roomba");
-  create::Create robot(model);
-  if (robot.connect(port, baud))
-    RCLCPP_INFO(get_logger(), "Connected to the robot!");
-  else {
-    RCLCPP_INFO(get_logger(), "Failed to connect to the robot!");
   }
 
   RCLCPP_INFO(get_logger(), "Successfully activated!");

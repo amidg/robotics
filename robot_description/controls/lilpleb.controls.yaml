@@ -2,11 +2,9 @@ controller_manager:
   ros__parameters:
     update_rate: 100  # Hz
 
+    # Global controllers
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
-
-    lilpleb_diff_controller:
-      type: diff_drive_controller/DiffDriveController
 
 # diff robot controllers
 lilpleb_diff_controller:
@@ -56,5 +54,3 @@ lilpleb_diff_controller:
     angular.z.min_acceleration: -1.0
     angular.z.max_jerk: 0.0
     angular.z.min_jerk: 0.0
-
-
