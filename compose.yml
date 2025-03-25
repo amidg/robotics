@@ -45,6 +45,34 @@ services:
       - ./demo:/app/src:z
 
   # lilpleb controls container
+  # NOTE (Dmitrii):
+  # This is podman version, must be started with `podman-compose`
+  # if started with `podman compose` that executes `docker compose`
+  # it will break
+  # TODO (Dmitrii):
+  # Rewrite this using docker only because no podman on Nvidia Jetson
+  lilpleb_hardware_demo:
+    profiles:
+      - lilpleb_desktop
+    extends:
+      file: ./containers/dockerfiles/base.yml
+      service: base_gui
+      #service: base_security
+    image: ghcr.io/amidg/ros2:latest
+    # TODO (Dmitrii): fix networking for podman VS docker
+    container_name: lilpleb_hardware_demo
+    #privileged: true
+    group_add:
+      - keep-groups
+    devices:
+      - /dev/ttyUSB0
+    volumes:
+      # for the tty access
+      #- /dev:/dev
+      # packages
+      - ./:/app/src:z
+
+  # lilpleb controls container
   lilpleb_create_node:
     <<: *base_nvidia
     profiles:
