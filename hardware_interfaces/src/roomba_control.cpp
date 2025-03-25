@@ -13,9 +13,8 @@
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 #include "rclcpp/rclcpp.hpp"
 
-namespace ros2_control_demo_example_2
-{
-hardware_interface::CallbackReturn DiffBotSystemHardware::on_init(
+namespace hardware_interfaces {
+hardware_interface::CallbackReturn RoombaSystemHardware::on_init(
   const hardware_interface::HardwareInfo & info)
 {
   if (
@@ -82,7 +81,7 @@ hardware_interface::CallbackReturn DiffBotSystemHardware::on_init(
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn DiffBotSystemHardware::on_configure(
+hardware_interface::CallbackReturn RoombaSystemHardware::on_configure(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
   // BEGIN: This part here is for exemplary purposes - Please do not copy to your production code
@@ -109,7 +108,7 @@ hardware_interface::CallbackReturn DiffBotSystemHardware::on_configure(
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn DiffBotSystemHardware::on_activate(
+hardware_interface::CallbackReturn RoombaSystemHardware::on_activate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
   // BEGIN: This part here is for exemplary purposes - Please do not copy to your production code
@@ -128,12 +127,20 @@ hardware_interface::CallbackReturn DiffBotSystemHardware::on_activate(
     set_command(name, get_state(name));
   }
 
+  RCLCPP_INFO(get_logger(), "Connecting to the Roomba");
+  create::Create robot(model);
+  if (robot.connect(port, baud))
+    RCLCPP_INFO(get_logger(), "Connected to the robot!");
+  else {
+    RCLCPP_INFO(get_logger(), "Failed to connect to the robot!");
+  }
+
   RCLCPP_INFO(get_logger(), "Successfully activated!");
 
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn DiffBotSystemHardware::on_deactivate(
+hardware_interface::CallbackReturn RoombaSystemHardware::on_deactivate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
   // BEGIN: This part here is for exemplary purposes - Please do not copy to your production code
@@ -151,7 +158,7 @@ hardware_interface::CallbackReturn DiffBotSystemHardware::on_deactivate(
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::return_type DiffBotSystemHardware::read(
+hardware_interface::return_type RoombaSystemHardware::read(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & period)
 {
   // BEGIN: This part here is for exemplary purposes - Please do not copy to your production code
@@ -179,7 +186,7 @@ hardware_interface::return_type DiffBotSystemHardware::read(
   return hardware_interface::return_type::OK;
 }
 
-hardware_interface::return_type ros2_control_demo_example_2 ::DiffBotSystemHardware::write(
+hardware_interface::return_type hardware_interfaces::RoombaSystemHardware::write(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
   // BEGIN: This part here is for exemplary purposes - Please do not copy to your production code
@@ -199,8 +206,10 @@ hardware_interface::return_type ros2_control_demo_example_2 ::DiffBotSystemHardw
   return hardware_interface::return_type::OK;
 }
 
-}  // namespace ros2_control_demo_example_2
+}
 
 #include "pluginlib/class_list_macros.hpp"
 PLUGINLIB_EXPORT_CLASS(
-  ros2_control_demo_example_2::DiffBotSystemHardware, hardware_interface::SystemInterface)
+  hardware_interfaces::RoombaSystemHardware,
+  hardware_interface::SystemInterface
+)

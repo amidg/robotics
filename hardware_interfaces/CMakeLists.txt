@@ -1,27 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project(hardware_interfaces LANGUAGES CXX)
 
-# fetch dependencies
-#include(FetchContent)
-#
-## Specify the library you want to include from GitHub
-#FetchContent_Declare(
-#  libcreate
-#  GIT_REPOSITORY https://github.com/amidg/libcreate.git
-#  GIT_TAG        706ddee
-#  # Note (Dmitrii): This is required to make it work with `find_package`
-#  # https://cmake.org/cmake/help/latest/module/FetchContent.html
-#  #OVERRIDE_FIND_PACKAGE
-#)
-#
-## Make sure FetchContent_MakeAvailable is called after declaring all dependencies
-#FetchContent_MakeAvailable(libcreate)
-##FetchContent_GetProperties(libcreate)
-##if (NOT libcreate_POPULATED)
-##  FetchContent_Populate(libcreate)
-##  add_subdirectory(${libcreate_SOURCE_DIR} ${libcreate_BINARY_DIR})
-##endif()
-
 if(CMAKE_CXX_COMPILER_ID MATCHES "(GNU|Clang)")
   add_compile_options(-Wall -Wextra)
 endif()
@@ -65,9 +44,6 @@ target_include_directories(hardware_interfaces
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include/hardware_interfaces>
 )
-#target_link_libraries(hardware_interfaces
-#    PRIVATE
-#)
 ament_target_dependencies(
   hardware_interfaces PUBLIC
   ${THIS_PACKAGE_INCLUDE_DEPENDS}

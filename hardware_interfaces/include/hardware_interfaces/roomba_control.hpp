@@ -1,5 +1,5 @@
-#ifndef ROS2_CONTROL_DEMO_EXAMPLE_2__DIFFBOT_SYSTEM_HPP_
-#define ROS2_CONTROL_DEMO_EXAMPLE_2__DIFFBOT_SYSTEM_HPP_
+#ifndef HARDWARE_INTERFACES_ROOMBA_SYSTEM_HPP_
+#define HARDWARE_INTERFACES_ROOMBA_SYSTEM_HPP_
 
 #include <memory>
 #include <string>
@@ -19,12 +19,12 @@
 // roomba stuff
 #include "create/create.h"
 
-namespace ros2_control_demo_example_2
+namespace hardware_interfaces
 {
-class DiffBotSystemHardware : public hardware_interface::SystemInterface
+class RoombaSystemHardware : public hardware_interface::SystemInterface
 {
 public:
-  RCLCPP_SHARED_PTR_DEFINITIONS(DiffBotSystemHardware);
+  RCLCPP_SHARED_PTR_DEFINITIONS(RoombaSystemHardware);
 
   hardware_interface::CallbackReturn on_init(
     const hardware_interface::HardwareInfo & info) override;
@@ -50,8 +50,10 @@ private:
   double hw_stop_sec_;
 
   create::RobotModel model = create::RobotModel::CREATE_2;
+  std::string port = "/dev/ttyUSB0";
+  int baud = 115200;
 };
 
-}  // namespace ros2_control_demo_example_2
+}  // namespace hardware_interfaces
 
-#endif  // ROS2_CONTROL_DEMO_EXAMPLE_2__DIFFBOT_SYSTEM_HPP_
+#endif
