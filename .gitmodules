@@ -10,3 +10,6 @@
 [submodule "3rdparty/twist_stamper_for_testing"]
 	path = 3rdparty/twist_stamper_for_testing
 	url = https://github.com/joshnewans/twist_stamper.git
+[submodule "3rdparty/libcreate"]
+	path = 3rdparty/libcreate
+	url = https://github.com/amidg/libcreate.git
