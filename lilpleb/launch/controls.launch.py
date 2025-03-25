@@ -40,7 +40,10 @@ def generate_launch_description():
             PathJoinSubstitution(
                 [FindPackageShare(robot_description_package),
                  "urdf", "lilpleb.urdf.xacro"]
-            )
+            ),
+            #" ",
+            #"use_mock_hardware:="
+            #"true"
         ]
     )
     robot_description = {"robot_description": robot_description_content}

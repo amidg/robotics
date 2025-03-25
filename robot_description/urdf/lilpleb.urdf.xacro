@@ -2,7 +2,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="lilpleb">
   <xacro:arg name="prefix" default="" />
   <xacro:arg name="use_sim" default="false" />
-  <xacro:arg name="use_mock_hardware" default="true" />
+  <xacro:arg name="use_mock_hardware" default="false" />
 
   <!-- Base Roomba robot -->
   <xacro:include filename="$(find create_description)/urdf/create_2.urdf.xacro" />
