@@ -7,8 +7,8 @@
   <maintainer email="dmitrii@gusev.tech">Dmitrii Gusev</maintainer>
   <license>GNU Public License 3</license>
 
-
-  <depend>robot_description</depend>
+  <depend>ros2launch</depend>
+  <depend>xacro</depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
