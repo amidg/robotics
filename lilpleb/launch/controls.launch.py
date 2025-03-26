@@ -22,7 +22,7 @@ def generate_launch_description():
     # Declare arguments
     enable_rqt_joint_pub_gui = DeclareLaunchArgument(
         rqt_joint_gui_arg,
-        default_value="true",
+        default_value="false",
         description="Start RViz2 automatically with this launch file.",
     )
 
@@ -40,7 +40,10 @@ def generate_launch_description():
             PathJoinSubstitution(
                 [FindPackageShare(robot_description_package),
                  "urdf", "lilpleb.urdf.xacro"]
-            )
+            ),
+            #" ",
+            #"use_mock_hardware:="
+            #"true"
         ]
     )
     robot_description = {"robot_description": robot_description_content}
@@ -48,9 +51,9 @@ def generate_launch_description():
     # ros2 control
     robot_controllers = PathJoinSubstitution(
         [
-            FindPackageShare(robot_description_package),
-            "controls",
-            "lilpleb.controls.yaml",
+            FindPackageShare(lilpleb_package),
+            "config",
+            "controls.yaml",
         ]
     )
 
@@ -64,12 +67,14 @@ def generate_launch_description():
         parameters=[robot_controllers],
         output="both",
     )
+
     robot_state_pub_node = Node(
         package="robot_state_publisher",
         executable="robot_state_publisher",
         output="both",
         parameters=[robot_description],
     )
+
     rviz_node = Node(
         package="rviz2",
         executable="rviz2",
@@ -90,11 +95,11 @@ def generate_launch_description():
         executable="spawner",
         arguments=[
             "lilpleb_diff_controller",
-            "--param-file",
-            robot_controllers,
+            #"--param-file",
+            #robot_controllers
             #"--controller-ros-args",
             #"-r /lilpleb_diff_controller/cmd_vel:=/cmd_vel",
-        ],
+        ]
     )
 
     # Delay rviz start after `joint_state_broadcaster`

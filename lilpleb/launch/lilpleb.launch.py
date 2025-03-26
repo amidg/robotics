@@ -19,7 +19,7 @@ def generate_launch_description():
 
     set_mock_hardware = DeclareLaunchArgument(
         "use_mock_hardware",
-        default_value="true",
+        default_value="false",
         description="Use mock hardware mirroring command to its states.",
     )
 

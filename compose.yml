@@ -44,20 +44,21 @@ services:
     volumes:
       - ./demo:/app/src:z
 
-  # lilpleb controls container
-  lilpleb_create_node:
-    <<: *base_nvidia
+  # NOTE (Dmitrii):
+  # Due to the Podman group management, running hardware from podman
+  # is not supported until further notice. USE DOCKER
+  #
+  # This configuration works with `sudo podman`
+  # but it kinda defeats the purpose
+  lilpleb_hardware:
     profiles:
       - lilpleb
-    build:
-      context: ./containers
-      dockerfile: Dockerfile.create
-      target: base
-    container_name: lilpleb_create_node
-    privileged: true
+    extends:
+      file: ./containers/dockerfiles/base.yml
+      service: base_security
+    image: ghcr.io/amidg/ros2:latest
+    container_name: lilpleb_hardware_demo
+    devices:
+      - /dev/ttyUSB0
     volumes:
-      # ros packages
-      - ./3rdparty/create_robot:/app/src/create_robot
-      - ./3rdparty/libcreate:/app/src/libcreate
-      # for the tty access
-      - /dev:/dev
+      - ./:/app/src:z

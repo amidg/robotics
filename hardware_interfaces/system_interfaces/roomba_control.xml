@@ -1,0 +1,9 @@
+<library path="hardware_interfaces">
+  <class name="hardware_interfaces/RoombaSystemHardware"
+         type="hardware_interfaces::RoombaSystemHardware"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      This hardware interface is based on the Differential Drive robot hardware interface-type and wraps iRobot C++ library `libcreate` to add support for the real Roomba/Create robots
+    </description>
+  </class>
+</library>
