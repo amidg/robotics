@@ -51,9 +51,9 @@ def generate_launch_description():
     # ros2 control
     robot_controllers = PathJoinSubstitution(
         [
-            FindPackageShare(robot_description_package),
-            "controls",
-            "lilpleb.controls.yaml",
+            FindPackageShare(lilpleb_package),
+            "config",
+            "controls.yaml",
         ]
     )
 
@@ -67,12 +67,14 @@ def generate_launch_description():
         parameters=[robot_controllers],
         output="both",
     )
+
     robot_state_pub_node = Node(
         package="robot_state_publisher",
         executable="robot_state_publisher",
         output="both",
         parameters=[robot_description],
     )
+
     rviz_node = Node(
         package="rviz2",
         executable="rviz2",
@@ -88,34 +90,34 @@ def generate_launch_description():
         arguments=["joint_state_broadcaster"],
     )
 
-    #diff_controller_spawner = Node(
-    #    package="controller_manager",
-    #    executable="spawner",
-    #    arguments=[
-    #        "lilpleb_diff_controller",
-    #        #"--param-file",
-    #        #robot_controllers
-    #        #"--controller-ros-args",
-    #        #"-r /lilpleb_diff_controller/cmd_vel:=/cmd_vel",
-    #    ]
-    #)
+    diff_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=[
+            "lilpleb_diff_controller",
+            #"--param-file",
+            #robot_controllers
+            #"--controller-ros-args",
+            #"-r /lilpleb_diff_controller/cmd_vel:=/cmd_vel",
+        ]
+    )
 
-    ## Delay rviz start after `joint_state_broadcaster`
-    #delay_rviz_after_joint_state_broadcaster_spawner = RegisterEventHandler(
-    #    event_handler=OnProcessExit(
-    #        target_action=joint_state_broadcaster_spawner,
-    #        on_exit=[rviz_node],
-    #    )
-    #)
+    # Delay rviz start after `joint_state_broadcaster`
+    delay_rviz_after_joint_state_broadcaster_spawner = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=joint_state_broadcaster_spawner,
+            on_exit=[rviz_node],
+        )
+    )
 
-    ## Delay start of joint_state_broadcaster after `robot_controller`
-    ## TODO(anyone): This is a workaround for flaky tests. Remove when fixed.
-    #delay_joint_state_broadcaster_after_robot_controller_spawner = RegisterEventHandler(
-    #    event_handler=OnProcessExit(
-    #        target_action=diff_controller_spawner,
-    #        on_exit=[joint_state_broadcaster_spawner],
-    #    )
-    #)
+    # Delay start of joint_state_broadcaster after `robot_controller`
+    # TODO(anyone): This is a workaround for flaky tests. Remove when fixed.
+    delay_joint_state_broadcaster_after_robot_controller_spawner = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=diff_controller_spawner,
+            on_exit=[joint_state_broadcaster_spawner],
+        )
+    )
 
 
     # add launch arguments to the array
@@ -128,10 +130,9 @@ def generate_launch_description():
     nodes = [
         control_node,
         robot_state_pub_node,
-        joint_state_broadcaster_spawner
-    #    diff_controller_spawner,
-    #    delay_rviz_after_joint_state_broadcaster_spawner,
-    #    delay_joint_state_broadcaster_after_robot_controller_spawner,
+        diff_controller_spawner,
+        delay_rviz_after_joint_state_broadcaster_spawner,
+        delay_joint_state_broadcaster_after_robot_controller_spawner,
     ]
 
     return LaunchDescription(declared_arguments + nodes)

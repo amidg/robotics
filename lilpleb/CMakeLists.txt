@@ -26,6 +26,7 @@ endif()
 # INSTALL
 install(
   DIRECTORY
+    config
     launch
     rviz
   DESTINATION share/lilpleb
