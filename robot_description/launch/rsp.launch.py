@@ -5,6 +5,16 @@ from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 """
+RSP launch arguments
+"""
+launch_args = [
+    ("description_file", "", "URDF/XACRO description file with the robot."),
+    ("prefix", "", "xacro prefix"),
+    ("use_sim", "false", "use gazebo simulation"),
+    ("use_mock_hardware", "false", "Use mock hardware mirroring inputs to outputs")
+]
+
+"""
 This is generic rsp launcher that takes arguments required
 for the robot state publisher
 param: args -> command line arguments
@@ -47,41 +57,21 @@ as well as ros2 itself
 """
 def generate_launch_description():
     # Declare arguments
-    description_file = DeclareLaunchArgument(
-        "description_file",
-        description="URDF/XACRO description file with the robot."
-    )
-
-    prefix = DeclareLaunchArgument(
-        "prefix",
-        default_value="",
-        description="xacro prefix"
-    )
-
-    use_gazebo_sim = DeclareLaunchArgument(
-        "use_sim",
-        default_value="false",
-        description="use gazebo simulation"
-    )
-
-    use_mock_hardware = DeclareLaunchArgument(
-        "use_mock_hardware",
-        default_value="false",
-        description="Use mock hardware mirroring inputs to outputs"
-    )
+    launch_arguments = [
+        DeclareLaunchArgument(
+            name,
+            default_value=default_value,
+            description=description
+        )
+        for name, default_value, description in launch_args
+    ]
 
     # done with Launch Description
     return LaunchDescription([
-        description_file,
-        prefix,
-        use_gazebo_sim,
-        use_mock_hardware,
+        # must unpack the list of launch args
+        *launch_arguments,
         OpaqueFunction(
             function=launch_setup,
-            args=[
-                "prefix",
-                "use_sim",
-                "use_mock_hardware"
-            ]
+            args=[arg[0] for arg in launch_args[1:]]
         )
     ])
