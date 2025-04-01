@@ -1,7 +1,7 @@
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, OpaqueFunction, IncludeLaunchDescription, RegisterEventHandler
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.conditions import IfCondition
+from launch.conditions import IfCondition, UnlessCondition
 from launch.event_handlers import OnProcessExit
 from launch.substitutions import Command, FindExecutable, PathJoinSubstitution, LaunchConfiguration, NotEqualsSubstitution
 from launch_ros.actions import Node
@@ -35,7 +35,8 @@ def launch_setup(context, *args, **kwargs):
         PythonLaunchDescriptionSource(controls_launch_path),
         launch_arguments={
             "robot": "lilpleb"
-        }.items()
+        }.items(),
+        condition=UnlessCondition(LaunchConfiguration("use_mock_hardware"))
     )
 
     return [

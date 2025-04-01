@@ -11,7 +11,6 @@ from launch_ros.substitutions import FindPackageShare
 launch_args = [
     ("robot", "", "Robot package name"),
     ("config", "view_robot.rviz", "RViz configuration file"),
-    ("rsp", "true", "Bring up Robot State Publisher"),
     ("jsp_gui", "false", "Joint State Publisher gui automatically")
 ]
 
