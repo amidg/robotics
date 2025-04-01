@@ -22,6 +22,8 @@ services:
     image: ghcr.io/amidg/ros2:latest
     container_name: ros_dev
     network_mode: host
+    environment:
+      - FASTDDS_BUILTIN_TRANSPORTS=UDPv4
     volumes:
       - ./:/app/src:z
 
@@ -31,6 +33,9 @@ services:
   # is not supported until further notice. USE DOCKER
   # This configuration works with `sudo podman`
   # but it kinda defeats the purpose
+  # Podman to Docker networking requires FastDDS to use the following:
+  # https://github.com/eProsima/Fast-DDS/issues/5396#issuecomment-2493358758
+  # export FASTDDS_BUILTIN_TRANSPORTS=UDPv4
   hardware_dev: &hardware_dev
     profiles:
       - hardware_dev
@@ -40,17 +45,9 @@ services:
     image: ghcr.io/amidg/ros2:latest
     container_name: hardware_dev
     network_mode: host
+    environment:
+      - FASTDDS_BUILTIN_TRANSPORTS=UDPv4
     privileged: true
-    volumes:
-      - ./:/app/src:z
-
-  # latest gazebo container
-  gazebo_dev: &gazebo_dev
-    <<: *base
-    profiles:
-      - gazebo_dev
-    image: gazebo:gzserver11
-    container_name: gazebo_dev
     volumes:
       - ./:/app/src:z
 
