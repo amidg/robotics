@@ -36,6 +36,7 @@ endforeach()
 # INSTALL
 install(
   DIRECTORY
+    launch
     meshes
     urdf
     controls

@@ -18,47 +18,44 @@ services:
   ros_dev: &ros_dev
     <<: *base
     profiles:
-      - ros_dev
+      - dev
     image: ghcr.io/amidg/ros2:latest
     container_name: ros_dev
+    network_mode: host
+    environment:
+      - FASTDDS_BUILTIN_TRANSPORTS=UDPv4
     volumes:
       - ./:/app/src:z
 
-  # latest gazebo container
-  gazebo_dev: &gazebo_dev
-    <<: *base
-    profiles:
-      - gazebo_dev
-    image: gazebo:gzserver11
-    container_name: gazebo_dev
-    volumes:
-      - ./:/app/src:z
-
-  # container for demo packages
-  ros_demo: &ros_demo
-    <<: *base
-    profiles:
-      - demo
-    image: ghcr.io/amidg/ros2:latest
-    container_name: ros_demo
-    volumes:
-      - ./demo:/app/src:z
-
+  # hardware demo container
   # NOTE (Dmitrii):
   # Due to the Podman group management, running hardware from podman
   # is not supported until further notice. USE DOCKER
-  #
   # This configuration works with `sudo podman`
   # but it kinda defeats the purpose
-  lilpleb_hardware:
+  # Podman to Docker networking requires FastDDS to use the following:
+  # https://github.com/eProsima/Fast-DDS/issues/5396#issuecomment-2493358758
+  # export FASTDDS_BUILTIN_TRANSPORTS=UDPv4
+  hardware_dev: &hardware_dev
     profiles:
-      - lilpleb
+      - hardware_dev
     extends:
       file: ./containers/dockerfiles/base.yml
       service: base_security
     image: ghcr.io/amidg/ros2:latest
+    container_name: hardware_dev
+    network_mode: host
+    environment:
+      - FASTDDS_BUILTIN_TRANSPORTS=UDPv4
+    privileged: true
+    volumes:
+      - ./:/app/src:z
+
+  # lilpleb robot
+  lilpleb_hardware:
+    <<: *hardware_dev
+    profiles:
+      - lilpleb
     container_name: lilpleb_hardware_demo
     devices:
       - /dev/ttyUSB0
-    volumes:
-      - ./:/app/src:z
