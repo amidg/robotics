@@ -16,6 +16,7 @@
           <param name="calculate_dynamics">true</param>
         </hardware>
       </xacro:if>
+      <!-- Joints -->
       <joint name="${prefix}left_wheel_joint">
         <command_interface name="velocity"/>
         <state_interface name="position"/>
@@ -26,6 +27,14 @@
         <state_interface name="position"/>
         <state_interface name="velocity"/>
       </joint>
+      <!-- GPIO -->
+      <gpio name="status_leds">
+        <command_interface name="debris_led"/>
+        <command_interface name="spot_led"/>
+        <command_interface name="dock_led"/>
+        <command_interface name="check_led"/>
+        <command_interface name="power_led"/>
+      </gpio>
     </ros2_control>
   </xacro:macro>
 
