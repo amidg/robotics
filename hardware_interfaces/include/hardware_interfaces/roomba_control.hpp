@@ -50,8 +50,15 @@ private:
   double hw_stop_sec_;
 
   create::RobotModel model = create::RobotModel::CREATE_2;
+  create::Create robot;
   std::string port = "/dev/ttyUSB0";
   int baud = 115200;
+
+  // GPIO
+  bool status_leds[5] = {false, false, false, false, false};
+
+  // functions
+  hardware_interface::CallbackReturn set_status_leds(const bool (&led_commands)[5]);
 };
 
 }  // namespace hardware_interfaces
