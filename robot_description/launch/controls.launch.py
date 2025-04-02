@@ -71,19 +71,10 @@ def launch_setup(context, *args, **kwargs):
         for controller in names
     ]
 
-    # delay joint state broadcaster after the last controller
-    delay_joint_state_broadcaster = RegisterEventHandler(
-        event_handler=OnProcessExit(
-            target_action=controllers[-1], # get last controller
-            on_exit=[controllers[0]], # joint state broadcaster is always first
-        )
-    )
-
     # return nodes
     return [
         control_node,
         *controllers,
-        delay_joint_state_broadcaster
     ]
 
 
