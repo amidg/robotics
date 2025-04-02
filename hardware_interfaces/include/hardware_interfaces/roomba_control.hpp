@@ -45,20 +45,13 @@ public:
     const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
 private:
-  // Parameters for the DiffBot simulation
-  double hw_start_sec_;
-  double hw_stop_sec_;
+   // robot itself
+   std::unique_ptr<create::Create> robot_;
 
-  create::RobotModel model = create::RobotModel::CREATE_2;
-  create::Create robot;
-  std::string port = "/dev/ttyUSB0";
-  int baud = 115200;
-
-  // GPIO
-  bool status_leds[5] = {false, false, false, false, false};
-
-  // functions
-  hardware_interface::CallbackReturn set_status_leds(const bool (&led_commands)[5]);
+  // parameters from the hardware interface `ros2_control.xacro`
+  create::RobotModel model_ = create::RobotModel::CREATE_2;
+  std::string serial_port_;
+  int serial_baud_;
 };
 
 }  // namespace hardware_interfaces

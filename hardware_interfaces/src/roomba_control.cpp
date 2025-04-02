@@ -24,12 +24,19 @@ hardware_interface::CallbackReturn RoombaSystemHardware::on_init(
     return hardware_interface::CallbackReturn::ERROR;
   }
 
-  //// BEGIN: This part here is for exemplary purposes - Please do not copy to your production code
-  //hw_start_sec_ =
-  //  hardware_interface::stod(info_.hardware_parameters["example_param_hw_start_duration_sec"]);
-  //hw_stop_sec_ =
-  //  hardware_interface::stod(info_.hardware_parameters["example_param_hw_stop_duration_sec"]);
-  //// END: This part here is for exemplary purposes - Please do not copy to your production code
+  // get info from the xacro parameters
+  auto roomba_model = info_.hardware_parameters["roomba_model"];
+  if (roomba_model == "roomba_400")
+      model_ = create::RobotModel::ROOMBA_400;
+  else if (roomba_model == "create_1")
+      model_ = create::RobotModel::CREATE_1;
+  else if (roomba_model == "create_2")
+      model_ = create::RobotModel::CREATE_2;
+  serial_port_ = info_.hardware_parameters["roomba_serial_port"];
+  serial_baud_ = hardware_interface::stod(info_.hardware_parameters["roomba_serial_baud"]);
+
+  // create robot
+  robot_ = std::make_unique<create::Create>(model_);
 
   // CONFIGURE JOINTS
   for (const hardware_interface::ComponentInfo & joint : info_.joints)
@@ -91,49 +98,40 @@ hardware_interface::CallbackReturn RoombaSystemHardware::on_init(
 hardware_interface::CallbackReturn RoombaSystemHardware::on_configure(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
-  // BEGIN: This part here is for exemplary purposes - Please do not copy to your production code
-  RCLCPP_INFO(get_logger(), "Configuring ...please wait...");
-  //for (int i = 0; i < hw_start_sec_; i++)
-  //{
-  //  rclcpp::sleep_for(std::chrono::seconds(1));
-  //  RCLCPP_INFO(get_logger(), "%.1f seconds left...", hw_start_sec_ - i);
-  //}
-  // END: This part here is for exemplary purposes - Please do not copy to your production code
+    RCLCPP_INFO(get_logger(), "Configuring ...please wait...");
+    RCLCPP_INFO(get_logger(), "Connecting to the Roomba");
+    if (robot_->connect(serial_port_, serial_baud_)) {
+      RCLCPP_INFO(get_logger(), "Connected to the robot!");
+      robot_->setMode(create::MODE_FULL);
+      RCLCPP_INFO(get_logger(), "Robot mode is set");
+    } else {
+      RCLCPP_INFO(get_logger(), "Failed to connect to the robot!");
+      return hardware_interface::CallbackReturn::ERROR;
+    }
 
-  RCLCPP_INFO(get_logger(), "Connecting to the Roomba");
-  //create::Create robot(model);
-  if (robot.connect(port, baud)) {
-    RCLCPP_INFO(get_logger(), "Connected to the robot!");
-    robot.setMode(create::MODE_FULL);
-    RCLCPP_INFO(get_logger(), "Robot mode is set");
-  } else {
-    RCLCPP_INFO(get_logger(), "Failed to connect to the robot!");
-    return hardware_interface::CallbackReturn::ERROR;
-  }
+    // reset values always when configuring hardware
+    for (const auto & [name, descr] : joint_state_interfaces_)
+    {
+      set_state(name, 0.0);
+    }
+    for (const auto & [name, descr] : joint_command_interfaces_)
+    {
+      set_command(name, 0.0);
+    }
 
-  // reset values always when configuring hardware
-  for (const auto & [name, descr] : joint_state_interfaces_)
-  {
-    set_state(name, 0.0);
-  }
-  for (const auto & [name, descr] : joint_command_interfaces_)
-  {
-    set_command(name, 0.0);
-  }
+    // gpio configure
+    for (const auto & [name, descr] : gpio_state_interfaces_)
+    {
+      set_state(name, 0.0);
+    }
+    for (const auto & [name, descr] : gpio_command_interfaces_)
+    {
+      set_command(name, 0.0);
+    }
 
-  // gpio configure
-  for (const auto & [name, descr] : gpio_state_interfaces_)
-  {
-    set_state(name, 0.0);
-  }
-  for (const auto & [name, descr] : gpio_command_interfaces_)
-  {
-    set_command(name, 0.0);
-  }
+    RCLCPP_INFO(get_logger(), "Successfully configured!");
 
-  RCLCPP_INFO(get_logger(), "Successfully configured!");
-
-  return hardware_interface::CallbackReturn::SUCCESS;
+    return hardware_interface::CallbackReturn::SUCCESS;
 }
 
 hardware_interface::CallbackReturn RoombaSystemHardware::on_activate(
@@ -239,15 +237,15 @@ hardware_interface::return_type hardware_interfaces::RoombaSystemHardware::write
     ss << "LED " << name << " command " << command << std::endl;
 
     if (name == "status_leds/power_led")
-        robot.setPowerLED((get_command(name)>0));
+        robot_->setPowerLED((get_command(name)>0));
     else if (name == "status_leds/dock_led")
-        robot.enableDockLED((get_command(name)>0));
+        robot_->enableDockLED((get_command(name)>0));
     else if (name == "status_leds/debris_led")
-        robot.enableDebrisLED((get_command(name)>0));
+        robot_->enableDebrisLED((get_command(name)>0));
     else if (name == "status_leds/check_led")
-        robot.enableCheckRobotLED((get_command(name)>0));
+        robot_->enableCheckRobotLED((get_command(name)>0));
     else if (name == "status_leds/spot_led")
-        robot.enableSpotLED((get_command(name)>0));
+        robot_->enableSpotLED((get_command(name)>0));
     //RCLCPP_INFO(get_logger(), command.c_str());
     // Simulate sending commands to the hardware
     //ss << std::fixed << std::setprecision(2) << std::endl
@@ -258,10 +256,6 @@ hardware_interface::return_type hardware_interfaces::RoombaSystemHardware::write
   // END: This part here is for exemplary purposes - Please do not copy to your production code
 
   return hardware_interface::return_type::OK;
-}
-
-hardware_interface::CallbackReturn set_status_leds(const bool (&led_commands)[5]) {
-  return hardware_interface::CallbackReturn::SUCCESS;
 }
 
 }
