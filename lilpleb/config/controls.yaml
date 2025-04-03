@@ -1,6 +1,6 @@
 controller_manager:
   ros__parameters:
-    update_rate: 100  # Hz
+    update_rate: 200  # Hz
 
     # Global controllers
     joint_state_broadcaster:
@@ -65,6 +65,9 @@ gpio_controller:
   ros__parameters:
     gpios:
       - status_leds
+      - bumper_light_sensors_static
+      - bumper_light_sensors_bool
+      - bumper_light_sensors_raw
     command_interfaces:
       status_leds:
         - interfaces:
@@ -73,3 +76,24 @@ gpio_controller:
           - dock_led
           - check_led
           - power_led
+    state_interfaces:
+      bumper_light_sensors_static:
+        - interfaces:
+          - is_left
+          - is_right
+      bumper_light_sensors_bool:
+        - interfaces:
+          - is_light_left
+          - is_light_front_left
+          - is_light_center_left
+          - is_light_center_right
+          - is_light_front_right
+          - is_light_right
+      bumper_light_sensors_raw:
+        - interfaces:
+          - light_left
+          - light_front_left
+          - light_center_left
+          - light_center_right
+          - light_front_right
+          - light_right

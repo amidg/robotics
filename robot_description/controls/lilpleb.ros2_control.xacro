@@ -36,6 +36,27 @@
         <command_interface name="check_led"/>
         <command_interface name="power_led"/>
       </gpio>
+      <!-- Bumper Light Sensors -->
+      <sensor name="bumper_light_sensors_bool">
+        <state_interface name="is_light_left"/>
+        <state_interface name="is_light_front_left"/>
+        <state_interface name="is_light_center_left"/>
+        <state_interface name="is_light_center_right"/>
+        <state_interface name="is_light_front_right"/>
+        <state_interface name="is_light_right"/>
+      </sensor>
+      <sensor name="bumper_light_sensors_raw">
+        <state_interface name="light_left"/>
+        <state_interface name="light_front_left"/>
+        <state_interface name="light_center_left"/>
+        <state_interface name="light_center_right"/>
+        <state_interface name="light_front_right"/>
+        <state_interface name="light_right"/>
+      </sensor>
+      <sensor name="bumper_light_sensors_static">
+        <state_interface name="is_left"/>
+        <state_interface name="is_right"/>
+      </sensor>
     </ros2_control>
   </xacro:macro>
 

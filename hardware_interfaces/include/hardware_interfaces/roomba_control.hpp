@@ -4,6 +4,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <mutex>
 
 #include "hardware_interface/handle.hpp"
 #include "hardware_interface/hardware_info.hpp"
@@ -52,6 +53,15 @@ private:
   create::RobotModel model_ = create::RobotModel::CREATE_2;
   std::string serial_port_;
   int serial_baud_;
+
+  // sensors
+  //std::mutex bumper_mtx_;
+  bool static_bumpers_[2] = {false};
+  bool light_bumpers_[6] = {false};
+  int light_signals_[6] = {0};
+
+  // functions
+  void get_bumper_readings();
 };
 
 }  // namespace hardware_interfaces

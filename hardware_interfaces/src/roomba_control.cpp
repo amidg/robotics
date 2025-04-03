@@ -38,59 +38,68 @@ hardware_interface::CallbackReturn RoombaSystemHardware::on_init(
   // create robot
   robot_ = std::make_unique<create::Create>(model_);
 
+  // configure bumper sensors
+
+
   // CONFIGURE JOINTS
-  for (const hardware_interface::ComponentInfo & joint : info_.joints)
-  {
-    // DiffBotSystem has exactly two states and one command interface on each joint
-    if (joint.command_interfaces.size() != 1)
-    {
-      RCLCPP_FATAL(
-        get_logger(), "Joint '%s' has %zu command interfaces found. 1 expected.",
-        joint.name.c_str(), joint.command_interfaces.size());
-      return hardware_interface::CallbackReturn::ERROR;
-    }
+  //for (const hardware_interface::ComponentInfo & joint : info_.joints)
+  //{
+  //  // DiffBotSystem has exactly two states and one command interface on each joint
+  //  if (joint.command_interfaces.size() != 1)
+  //  {
+  //    RCLCPP_FATAL(
+  //      get_logger(), "Joint '%s' has %zu command interfaces found. 1 expected.",
+  //      joint.name.c_str(), joint.command_interfaces.size());
+  //    return hardware_interface::CallbackReturn::ERROR;
+  //  }
 
-    if (joint.command_interfaces[0].name != hardware_interface::HW_IF_VELOCITY)
-    {
-      RCLCPP_FATAL(
-        get_logger(), "Joint '%s' have %s command interfaces found. '%s' expected.",
-        joint.name.c_str(), joint.command_interfaces[0].name.c_str(),
-        hardware_interface::HW_IF_VELOCITY);
-      return hardware_interface::CallbackReturn::ERROR;
-    }
+  //  if (joint.command_interfaces[0].name != hardware_interface::HW_IF_VELOCITY)
+  //  {
+  //    RCLCPP_FATAL(
+  //      get_logger(), "Joint '%s' have %s command interfaces found. '%s' expected.",
+  //      joint.name.c_str(), joint.command_interfaces[0].name.c_str(),
+  //      hardware_interface::HW_IF_VELOCITY);
+  //    return hardware_interface::CallbackReturn::ERROR;
+  //  }
 
-    if (joint.state_interfaces.size() != 2)
-    {
-      RCLCPP_FATAL(
-        get_logger(), "Joint '%s' has %zu state interface. 2 expected.", joint.name.c_str(),
-        joint.state_interfaces.size());
-      return hardware_interface::CallbackReturn::ERROR;
-    }
+  //  if (joint.state_interfaces.size() != 2)
+  //  {
+  //    RCLCPP_FATAL(
+  //      get_logger(), "Joint '%s' has %zu state interface. 2 expected.", joint.name.c_str(),
+  //      joint.state_interfaces.size());
+  //    return hardware_interface::CallbackReturn::ERROR;
+  //  }
 
-    if (joint.state_interfaces[0].name != hardware_interface::HW_IF_POSITION)
-    {
-      RCLCPP_FATAL(
-        get_logger(), "Joint '%s' have '%s' as first state interface. '%s' expected.",
-        joint.name.c_str(), joint.state_interfaces[0].name.c_str(),
-        hardware_interface::HW_IF_POSITION);
-      return hardware_interface::CallbackReturn::ERROR;
-    }
+  //  if (joint.state_interfaces[0].name != hardware_interface::HW_IF_POSITION)
+  //  {
+  //    RCLCPP_FATAL(
+  //      get_logger(), "Joint '%s' have '%s' as first state interface. '%s' expected.",
+  //      joint.name.c_str(), joint.state_interfaces[0].name.c_str(),
+  //      hardware_interface::HW_IF_POSITION);
+  //    return hardware_interface::CallbackReturn::ERROR;
+  //  }
 
-    if (joint.state_interfaces[1].name != hardware_interface::HW_IF_VELOCITY)
-    {
-      RCLCPP_FATAL(
-        get_logger(), "Joint '%s' have '%s' as second state interface. '%s' expected.",
-        joint.name.c_str(), joint.state_interfaces[1].name.c_str(),
-        hardware_interface::HW_IF_VELOCITY);
-      return hardware_interface::CallbackReturn::ERROR;
-    }
-  }
+  //  if (joint.state_interfaces[1].name != hardware_interface::HW_IF_VELOCITY)
+  //  {
+  //    RCLCPP_FATAL(
+  //      get_logger(), "Joint '%s' have '%s' as second state interface. '%s' expected.",
+  //      joint.name.c_str(), joint.state_interfaces[1].name.c_str(),
+  //      hardware_interface::HW_IF_VELOCITY);
+  //    return hardware_interface::CallbackReturn::ERROR;
+  //  }
+  //}
 
-  // CONFIGURE GPIO
-  RCLCPP_INFO(get_logger(), "HAS '%ld' GPIO components with '%ld' command interfaces",
-    info_.gpios.size(),
-    info_.gpios[0].command_interfaces.size()
-  );
+  //// report GPIO
+  //RCLCPP_INFO(get_logger(), "HAS '%ld' GPIO components with '%ld' command interfaces",
+  //  info_.gpios.size(),
+  //  info_.gpios[0].command_interfaces.size()
+  //);
+
+  //// report sensors
+  //RCLCPP_INFO(get_logger(), "HAS '%ld' senor components with '%ld' state interfaces",
+  //  info_.sensors.size(),
+  //  info_.sensors[0].state_interfaces.size()
+  //);
 
   return hardware_interface::CallbackReturn::SUCCESS;
 }
@@ -137,26 +146,13 @@ hardware_interface::CallbackReturn RoombaSystemHardware::on_configure(
 hardware_interface::CallbackReturn RoombaSystemHardware::on_activate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
-  // BEGIN: This part here is for exemplary purposes - Please do not copy to your production code
   RCLCPP_INFO(get_logger(), "Activating ...please wait...");
-
-  //for (auto i = 0; i < hw_start_sec_; i++)
-  //{
-  //  rclcpp::sleep_for(std::chrono::seconds(1));
-  //  RCLCPP_INFO(get_logger(), "%.1f seconds left...", hw_start_sec_ - i);
-  //}
-  //// END: This part here is for exemplary purposes - Please do not copy to your production code
 
   // command and state should be equal when starting
   for (const auto & [name, descr] : joint_command_interfaces_)
   {
     set_command(name, get_state(name));
   }
-
-  //for (const auto & [name, descr] : gpio_command_interfaces_)
-  //{
-  //  set_command(name, get_state(name));
-  //}
 
   RCLCPP_INFO(get_logger(), "Successfully activated!");
 
@@ -166,51 +162,73 @@ hardware_interface::CallbackReturn RoombaSystemHardware::on_activate(
 hardware_interface::CallbackReturn RoombaSystemHardware::on_deactivate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
-  // BEGIN: This part here is for exemplary purposes - Please do not copy to your production code
-  //RCLCPP_INFO(get_logger(), "Deactivating ...please wait...");
-  //for (auto i = 0; i < hw_stop_sec_; i++)
-  //{
-  //  rclcpp::sleep_for(std::chrono::seconds(1));
-  //  RCLCPP_INFO(get_logger(), "%.1f seconds left...", hw_stop_sec_ - i);
-  //}
-  // END: This part here is for exemplary purposes - Please do not copy to your production code
-
   RCLCPP_INFO(get_logger(), "Successfully deactivated!");
-
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
 hardware_interface::return_type RoombaSystemHardware::read(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & period)
 {
-  // BEGIN: This part here is for exemplary purposes - Please do not copy to your production code
   std::stringstream ss;
-  //ss << "Reading states:";
-  //ss << std::fixed << std::setprecision(2);
-  for (const auto & [name, descr] : joint_state_interfaces_)
-  {
-    if (descr.get_interface_name() == hardware_interface::HW_IF_POSITION)
-    {
-      // Simulate DiffBot wheels's movement as a first-order system
-      // Update the joint status: this is a revolute joint without any limit.
-      // Simply integrates
-      auto velo = get_command(descr.get_prefix_name() + "/" + hardware_interface::HW_IF_VELOCITY);
-      set_state(name, get_state(name) + period.seconds() * velo);
+  ss << "Reading states:";
 
-      //ss << std::endl
-      //   << "\t position " << get_state(name) << " and velocity " << velo << " for '" << name
-      //   << "'!";
-    }
+  // Bumpers
+  get_bumper_readings();
+  for (const auto & [name, descr] : sensor_state_interfaces_)
+  {
+      std::string sensor_name{name};
+      if (sensor_name.find("bool") != std::string::npos) {
+          if (sensor_name.find("light_left") != std::string::npos)
+              set_state(name, light_bumpers_[0]);
+          else if (sensor_name.find("front_left") != std::string::npos)
+              set_state(name, light_bumpers_[1]);
+          else if (sensor_name.find("center_left") != std::string::npos)
+              set_state(name, light_bumpers_[2]);
+          else if (sensor_name.find("center_right") != std::string::npos)
+              set_state(name, light_bumpers_[3]);
+          else if (sensor_name.find("front_right") != std::string::npos)
+              set_state(name, light_bumpers_[4]);
+          else if (sensor_name.find("light_right") != std::string::npos)
+              set_state(name, light_bumpers_[5]);
+      } else if (sensor_name.find("raw") != std::string::npos) {
+          if (sensor_name.find("light_left") != std::string::npos)
+              set_state(name, light_signals_[0]);
+          else if (sensor_name.find("front_left") != std::string::npos)
+              set_state(name, light_signals_[1]);
+          else if (sensor_name.find("center_left") != std::string::npos)
+              set_state(name, light_signals_[2]);
+          else if (sensor_name.find("center_right") != std::string::npos)
+              set_state(name, light_signals_[3]);
+          else if (sensor_name.find("front_right") != std::string::npos)
+              set_state(name, light_signals_[4]);
+          else if (sensor_name.find("light_right") != std::string::npos)
+              set_state(name, light_signals_[5]);
+      } else if (sensor_name.find("static") != std::string::npos) {
+          if (sensor_name.find("left") != std::string::npos)
+              set_state(name, static_bumpers_[0]);
+          else if (sensor_name.find("right") != std::string::npos)
+              set_state(name, static_bumpers_[1]);
+      }
   }
 
-  // led states
-  //for (const auto & [name, descr] : gpio_state_interfaces_)
+  //ss << std::fixed << std::setprecision(2);
+  //for (const auto & [name, descr] : joint_state_interfaces_)
   //{
-  //  ss << std::fixed << std::setprecision(2) << std::endl
-  //     << "\t" << get_state(name) << " from GPIO input '" << name << "'";
+  //  if (descr.get_interface_name() == hardware_interface::HW_IF_POSITION)
+  //  {
+  //    // Simulate DiffBot wheels's movement as a first-order system
+  //    // Update the joint status: this is a revolute joint without any limit.
+  //    // Simply integrates
+  //    auto velo = get_command(descr.get_prefix_name() + "/" + hardware_interface::HW_IF_VELOCITY);
+  //    set_state(name, get_state(name) + period.seconds() * velo);
+
+  //    //ss << std::endl
+  //    //   << "\t position " << get_state(name) << " and velocity " << velo << " for '" << name
+  //    //   << "'!";
+  //  }
   //}
+  
   RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 500, "%s", ss.str().c_str());
-  // END: This part here is for exemplary purposes - Please do not copy to your production code
 
   return hardware_interface::return_type::OK;
 }
@@ -218,23 +236,14 @@ hardware_interface::return_type RoombaSystemHardware::read(
 hardware_interface::return_type hardware_interfaces::RoombaSystemHardware::write(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
-  // BEGIN: This part here is for exemplary purposes - Please do not copy to your production code
   std::stringstream ss;
-  ss << "Writing commands:";
-  for (const auto & [name, descr] : joint_command_interfaces_)
-  {
-    // Simulate sending commands to the hardware
-    set_state(name, get_command(name));
+  //ss << "Writing commands:";
 
-    //ss << std::fixed << std::setprecision(2) << std::endl
-    //   << "\t" << "command " << get_command(name) << " for '" << name << "'!";
-  }
-
-  // LED controls
+  // LEDs
   for (const auto & [name, descr] : gpio_command_interfaces_)
   {
-    std::string command = std::to_string(get_command(name));
-    ss << "LED " << name << " command " << command << std::endl;
+    //std::string command = std::to_string(get_command(name));
+    //ss << "LED " << name << " command " << command << std::endl;
 
     if (name == "status_leds/power_led")
         robot_->setPowerLED((get_command(name)>0));
@@ -246,16 +255,45 @@ hardware_interface::return_type hardware_interfaces::RoombaSystemHardware::write
         robot_->enableCheckRobotLED((get_command(name)>0));
     else if (name == "status_leds/spot_led")
         robot_->enableSpotLED((get_command(name)>0));
-    //RCLCPP_INFO(get_logger(), command.c_str());
-    // Simulate sending commands to the hardware
-    //ss << std::fixed << std::setprecision(2) << std::endl
-    //   << "\t" << get_command(name) << " for GPIO output '" << name << "'";
   }
 
-  RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 500, "%s", ss.str().c_str());
-  // END: This part here is for exemplary purposes - Please do not copy to your production code
+  //for (const auto & [name, descr] : joint_command_interfaces_)
+  //{
+  //  // Simulate sending commands to the hardware
+  //  set_state(name, get_command(name));
+
+  //  //ss << std::fixed << std::setprecision(2) << std::endl
+  //  //   << "\t" << "command " << get_command(name) << " for '" << name << "'!";
+  //}
+
+  //RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 500, "%s", ss.str().c_str());
 
   return hardware_interface::return_type::OK;
+}
+
+void hardware_interfaces::RoombaSystemHardware::get_bumper_readings()
+{
+    // static bumpers
+    static_bumpers_[0] = robot_->isLeftBumper();
+    static_bumpers_[1] = robot_->isRightBumper();
+
+    if (model_ == create::RobotModel::CREATE_2) {
+        // boolean bumpers
+        light_bumpers_[0] = robot_->isLightBumperLeft();
+        light_bumpers_[1] = robot_->isLightBumperFrontLeft();
+        light_bumpers_[2] = robot_->isLightBumperCenterLeft();
+        light_bumpers_[3] = robot_->isLightBumperCenterRight();
+        light_bumpers_[4] = robot_->isLightBumperFrontRight();
+        light_bumpers_[5] = robot_->isLightBumperRight();
+
+        // raw signals
+        light_signals_[0] = robot_->getLightSignalLeft();
+        light_signals_[1] = robot_->getLightSignalFrontLeft();
+        light_signals_[2] = robot_->getLightSignalCenterLeft();
+        light_signals_[3] = robot_->getLightSignalCenterRight();
+        light_signals_[4] = robot_->getLightSignalFrontRight();
+        light_signals_[5] = robot_->getLightSignalRight();
+    }
 }
 
 }
