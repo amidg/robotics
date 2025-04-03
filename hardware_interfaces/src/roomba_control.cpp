@@ -175,10 +175,34 @@ hardware_interface::return_type RoombaSystemHardware::read(
   // Read sensors
   get_battery_status();
   get_bumper_readings();
+  get_button_status();
+
+  // report GPIOs
+  for (const auto & [name, descr] : gpio_state_interfaces_) {
+      std::string sensor_name{name};
+      // Buttons
+      if (sensor_name.find("buttons") != std::string::npos) {
+          if (sensor_name.find("clean") != std::string::npos)
+              set_state(name, buttons_[0]);
+          else if (sensor_name.find("clock") != std::string::npos)
+              set_state(name, buttons_[1]);
+          else if (sensor_name.find("schedule") != std::string::npos)
+              set_state(name, buttons_[2]);
+          else if (sensor_name.find("day") != std::string::npos)
+              set_state(name, buttons_[3]);
+          else if (sensor_name.find("hour") != std::string::npos)
+              set_state(name, buttons_[4]);
+          else if (sensor_name.find("minute") != std::string::npos)
+              set_state(name, buttons_[5]);
+          else if (sensor_name.find("dock") != std::string::npos)
+              set_state(name, buttons_[6]);
+          else if (sensor_name.find("spot") != std::string::npos)
+              set_state(name, buttons_[7]);
+      }
+  }
 
   // report all sensors
-  for (const auto & [name, descr] : sensor_state_interfaces_)
-  {
+  for (const auto & [name, descr] : sensor_state_interfaces_) {
       std::string sensor_name{name};
       // Battery
       if (sensor_name.find("battery") != std::string::npos) {
@@ -324,6 +348,20 @@ void hardware_interfaces::RoombaSystemHardware::get_battery_status()
     battery_voltage_ = robot_->getVoltage();
     battery_current_ = robot_->getCurrent();
     battery_temperature_ = robot_->getTemperature();
+}
+
+void hardware_interfaces::RoombaSystemHardware::get_button_status()
+{
+    buttons_[0] = robot_->isCleanButtonPressed();
+    if (model_ != create::RobotModel::CREATE_2) {
+        buttons_[1] = robot_->isClockButtonPressed();
+        buttons_[2] = robot_->isScheduleButtonPressed();
+    }
+    buttons_[3] = robot_->isDayButtonPressed();
+    buttons_[4] = robot_->isHourButtonPressed();
+    buttons_[5] = robot_->isMinButtonPressed();
+    buttons_[6] = robot_->isDockButtonPressed();
+    buttons_[7] = robot_->isSpotButtonPressed();
 }
 
 } // end of hardware_interfaces::RoombaSystemHardware

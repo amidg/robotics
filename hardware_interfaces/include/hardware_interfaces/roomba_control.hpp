@@ -54,6 +54,9 @@ private:
   std::string serial_port_;
   int serial_baud_;
 
+  // buttons
+  bool buttons_[8] = {false};
+
   // sensors
   //std::mutex bumper_mtx_;
   bool static_bumpers_[2] = {false};
@@ -71,6 +74,7 @@ private:
   // functions
   void get_bumper_readings();
   void get_battery_status();
+  void get_button_status();
 };
 
 }  // namespace hardware_interfaces

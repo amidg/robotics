@@ -36,6 +36,16 @@
         <command_interface name="check_led"/>
         <command_interface name="power_led"/>
       </gpio>
+      <gpio name="buttons">
+        <state_interface name="clean_button"/>
+        <state_interface name="clock_button"/>
+        <state_interface name="schedule_button"/>
+        <state_interface name="day_button"/>
+        <state_interface name="hour_button"/>
+        <state_interface name="minute_button"/>
+        <state_interface name="dock_button"/>
+        <state_interface name="spot_button"/>
+      </gpio>
       <!-- Bumper Light Sensors -->
       <sensor name="bumper_light_sensors_bool">
         <state_interface name="is_light_left"/>

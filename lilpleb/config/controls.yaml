@@ -65,6 +65,7 @@ gpio_controller:
   ros__parameters:
     gpios:
       - status_leds
+      - buttons
       - bumper_light_sensors_static
       - bumper_light_sensors_bool
       - bumper_light_sensors_raw
@@ -78,6 +79,16 @@ gpio_controller:
           - check_led
           - power_led
     state_interfaces:
+      buttons:
+        - interfaces:
+          - clean_button
+          - clock_button
+          - schedule_button
+          - day_button
+          - hour_button
+          - minute_button
+          - dock_button
+          - spot_button
       bumper_light_sensors_static:
         - interfaces:
           - is_left
