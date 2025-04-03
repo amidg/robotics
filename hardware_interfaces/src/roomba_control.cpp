@@ -169,14 +169,34 @@ hardware_interface::CallbackReturn RoombaSystemHardware::on_deactivate(
 hardware_interface::return_type RoombaSystemHardware::read(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & period)
 {
-  std::stringstream ss;
-  ss << "Reading states:";
+  //std::stringstream ss;
+  //ss << "Reading states:";
 
-  // Bumpers
+  // Read sensors
+  get_battery_status();
   get_bumper_readings();
+
+  // report all sensors
   for (const auto & [name, descr] : sensor_state_interfaces_)
   {
       std::string sensor_name{name};
+      // Battery
+      if (sensor_name.find("battery") != std::string::npos) {
+          if (sensor_name.find("capacity") != std::string::npos)
+              set_state(name, battery_capacity_);
+          else if (sensor_name.find("charge") != std::string::npos)
+              set_state(name, battery_charge_);
+          else if (sensor_name.find("state") != std::string::npos)
+              set_state(name, battery_percent_);
+          else if (sensor_name.find("voltage") != std::string::npos)
+              set_state(name, battery_voltage_);
+          else if (sensor_name.find("current") != std::string::npos)
+              set_state(name, battery_current_);
+          else if (sensor_name.find("temperature") != std::string::npos)
+              set_state(name, battery_temperature_);
+      }
+
+      // Bumper Light Sensors
       if (sensor_name.find("bool") != std::string::npos) {
           if (sensor_name.find("light_left") != std::string::npos)
               set_state(name, light_bumpers_[0]);
@@ -228,7 +248,7 @@ hardware_interface::return_type RoombaSystemHardware::read(
   //  }
   //}
   
-  RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 500, "%s", ss.str().c_str());
+  //RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 500, "%s", ss.str().c_str());
 
   return hardware_interface::return_type::OK;
 }
@@ -296,7 +316,17 @@ void hardware_interfaces::RoombaSystemHardware::get_bumper_readings()
     }
 }
 
+void hardware_interfaces::RoombaSystemHardware::get_battery_status()
+{
+    battery_capacity_ = robot_->getBatteryCapacity();
+    battery_charge_ = robot_->getBatteryCharge();
+    battery_percent_ = (battery_charge_ / battery_capacity_) * 100.0;
+    battery_voltage_ = robot_->getVoltage();
+    battery_current_ = robot_->getCurrent();
+    battery_temperature_ = robot_->getTemperature();
 }
+
+} // end of hardware_interfaces::RoombaSystemHardware
 
 #include "pluginlib/class_list_macros.hpp"
 PLUGINLIB_EXPORT_CLASS(

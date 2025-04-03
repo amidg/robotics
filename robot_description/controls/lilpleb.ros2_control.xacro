@@ -57,6 +57,15 @@
         <state_interface name="is_left"/>
         <state_interface name="is_right"/>
       </sensor>
+      <!-- Battery -->
+      <sensor name="battery">
+        <state_interface name="capacity"/>
+        <state_interface name="charge"/>
+        <state_interface name="state"/>
+        <state_interface name="voltage"/>
+        <state_interface name="current"/>
+        <state_interface name="temperature"/>
+      </sensor>
     </ros2_control>
   </xacro:macro>
 

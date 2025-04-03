@@ -68,6 +68,7 @@ gpio_controller:
       - bumper_light_sensors_static
       - bumper_light_sensors_bool
       - bumper_light_sensors_raw
+      - battery
     command_interfaces:
       status_leds:
         - interfaces:
@@ -97,3 +98,11 @@ gpio_controller:
           - light_center_right
           - light_front_right
           - light_right
+      battery:
+        - interfaces:
+          - capacity
+          - charge
+          - state
+          - voltage
+          - current
+          - temperature

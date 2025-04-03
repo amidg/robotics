@@ -60,8 +60,17 @@ private:
   bool light_bumpers_[6] = {false};
   int light_signals_[6] = {0};
 
+  // battery
+  float battery_capacity_;
+  float battery_charge_;
+  float battery_percent_;
+  float battery_voltage_;
+  float battery_current_;
+  int battery_temperature_;
+
   // functions
   void get_bumper_readings();
+  void get_battery_status();
 };
 
 }  // namespace hardware_interfaces
