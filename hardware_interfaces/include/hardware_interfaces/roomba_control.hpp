@@ -54,7 +54,10 @@ private:
   std::string serial_port_;
   int serial_baud_;
 
-  // cleaning motors: main, side, vacuum
+  // drive motors [left, right]
+  float drive_motors_[2] = {0.0};
+
+  // cleaning motors [main, side, vacuum]
   float cleaning_motors_[3] = {0.0};
 
   // buttons

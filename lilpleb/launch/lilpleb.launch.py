@@ -32,7 +32,7 @@ def launch_setup(context, *args, **kwargs):
             )
         ),
         launch_arguments={
-            "cmd_vel": "lilpleb_diff_controller/cmd_vel"
+            "cmd_vel": "diff_drive_controller/cmd_vel"
         }.items(),
         condition=IfCondition(NotEqualsSubstitution("teleop_type", "none"))
     )

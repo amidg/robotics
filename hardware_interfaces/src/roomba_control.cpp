@@ -179,6 +179,24 @@ hardware_interface::return_type RoombaSystemHardware::read(
   get_cliff_status();
   get_wheel_drop_status();
 
+  // Wheel states
+  for (const auto & [name, descr] : joint_state_interfaces_) {
+      //ss << descr.get_prefix_name() << "/" << descr.get_interface_name() << std::endl;
+
+      //if (descr.get_interface_name() == hardware_interface::HW_IF_POSITION)
+      //{
+      //  // Simulate DiffBot wheels's movement as a first-order system
+      //  // Update the joint status: this is a revolute joint without any limit.
+      //  // Simply integrates
+      //  auto velo = get_command(descr.get_prefix_name() + "/" + hardware_interface::HW_IF_VELOCITY);
+      //  set_state(name, get_state(name) + period.seconds() * velo);
+
+      //  //ss << std::endl
+      //  //   << "\t position " << get_state(name) << " and velocity " << velo << " for '" << name
+      //  //   << "'!";
+      //}
+  }
+
   // report GPIOs
   for (const auto & [name, descr] : gpio_state_interfaces_) {
       std::string sensor_name{name};
@@ -276,23 +294,6 @@ hardware_interface::return_type RoombaSystemHardware::read(
               set_state(name, static_bumpers_[1]);
       }
   }
-
-  //ss << std::fixed << std::setprecision(2);
-  //for (const auto & [name, descr] : joint_state_interfaces_)
-  //{
-  //  if (descr.get_interface_name() == hardware_interface::HW_IF_POSITION)
-  //  {
-  //    // Simulate DiffBot wheels's movement as a first-order system
-  //    // Update the joint status: this is a revolute joint without any limit.
-  //    // Simply integrates
-  //    auto velo = get_command(descr.get_prefix_name() + "/" + hardware_interface::HW_IF_VELOCITY);
-  //    set_state(name, get_state(name) + period.seconds() * velo);
-
-  //    //ss << std::endl
-  //    //   << "\t position " << get_state(name) << " and velocity " << velo << " for '" << name
-  //    //   << "'!";
-  //  }
-  //}
   
   RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 500, "%s", ss.str().c_str());
 
@@ -304,10 +305,35 @@ hardware_interface::return_type hardware_interfaces::RoombaSystemHardware::write
 {
   std::stringstream ss;
   //ss << "Writing commands:";
-  // record values from the interface
-  
 
-  // write values
+  // write values for the joints
+  for (const auto & [name, descr] : joint_command_interfaces_)
+  {
+    // left
+    if (name.find("left") != std::string::npos) {
+        drive_motors_[0] = get_command(name);
+    } else if (name.find("right") != std::string::npos) {
+        drive_motors_[1] = get_command(name);
+    }
+    // left/right_wheel_joint/velocity
+    //ss << descr.get_prefix_name() << "/" << descr.get_interface_name()
+    //ss << name
+    //   << ": " << std::to_string(get_command(name))
+    //   << std::endl;
+
+    
+
+    // Simulate sending commands to the hardware
+    //set_state(name, get_command(name));
+
+    //ss << std::fixed << std::setprecision(2) << std::endl
+    //   << "\t" << "command " << get_command(name) << " for '" << name << "'!";
+  }
+
+  // set wheel speed
+  robot_->driveWheels(drive_motors_[0], drive_motors_[1]);
+
+  // write values for GPIO
   for (const auto & [name, descr] : gpio_command_interfaces_)
   {
     std::string cmd_name{name};
@@ -339,16 +365,7 @@ hardware_interface::return_type hardware_interfaces::RoombaSystemHardware::write
     
   }
 
-  //for (const auto & [name, descr] : joint_command_interfaces_)
-  //{
-  //  // Simulate sending commands to the hardware
-  //  set_state(name, get_command(name));
-
-  //  //ss << std::fixed << std::setprecision(2) << std::endl
-  //  //   << "\t" << "command " << get_command(name) << " for '" << name << "'!";
-  //}
-
-  //RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 500, "%s", ss.str().c_str());
+  RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 500, "%s", ss.str().c_str());
 
   return hardware_interface::return_type::OK;
 }
