@@ -71,10 +71,16 @@ private:
   float battery_current_;
   int battery_temperature_;
 
+  // cliff sensors
+  bool cliff_sensors_[4] = {false};
+  bool wheel_drop_[2] = {false};
+
   // functions
   void get_bumper_readings();
   void get_battery_status();
   void get_button_status();
+  void get_cliff_status();
+  void get_wheel_drop_status();
 };
 
 }  // namespace hardware_interfaces

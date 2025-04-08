@@ -70,6 +70,8 @@ gpio_controller:
       - bumper_light_sensors_bool
       - bumper_light_sensors_raw
       - battery
+      - cliff
+      - wheeldrop
     command_interfaces:
       status_leds:
         - interfaces:
@@ -117,3 +119,13 @@ gpio_controller:
           - voltage
           - current
           - temperature
+      cliff:
+        - interfaces:
+          - left
+          - front_left
+          - right 
+          - front_right
+      wheeldrop:
+        - interfaces:
+          - left
+          - right 

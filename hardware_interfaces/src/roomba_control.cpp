@@ -169,13 +169,15 @@ hardware_interface::CallbackReturn RoombaSystemHardware::on_deactivate(
 hardware_interface::return_type RoombaSystemHardware::read(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & period)
 {
-  //std::stringstream ss;
+  std::stringstream ss;
   //ss << "Reading states:";
 
   // Read sensors
   get_battery_status();
   get_bumper_readings();
   get_button_status();
+  get_cliff_status();
+  get_wheel_drop_status();
 
   // report GPIOs
   for (const auto & [name, descr] : gpio_state_interfaces_) {
@@ -204,6 +206,26 @@ hardware_interface::return_type RoombaSystemHardware::read(
   // report all sensors
   for (const auto & [name, descr] : sensor_state_interfaces_) {
       std::string sensor_name{name};
+      // Wheel Drop
+      if (sensor_name.find("wheeldrop") != std::string::npos) {
+          if (sensor_name.find("left") != std::string::npos)
+              set_state(name, wheel_drop_[0]);
+          else if (sensor_name.find("right") != std::string::npos)
+              set_state(name, wheel_drop_[1]);
+      }
+
+      // Cliff
+      if (sensor_name.find("cliff") != std::string::npos) {
+          if (sensor_name.find("front_left") != std::string::npos)
+              set_state(name, cliff_sensors_[1]);
+          else if (sensor_name.find("left") != std::string::npos)
+              set_state(name, cliff_sensors_[0]);
+          else if (sensor_name.find("front_right") != std::string::npos)
+              set_state(name, cliff_sensors_[3]);
+          else if (sensor_name.find("right") != std::string::npos)
+              set_state(name, cliff_sensors_[2]);
+      }
+
       // Battery
       if (sensor_name.find("battery") != std::string::npos) {
           if (sensor_name.find("capacity") != std::string::npos)
@@ -272,7 +294,7 @@ hardware_interface::return_type RoombaSystemHardware::read(
   //  }
   //}
   
-  //RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 500, "%s", ss.str().c_str());
+  RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 500, "%s", ss.str().c_str());
 
   return hardware_interface::return_type::OK;
 }
@@ -362,6 +384,20 @@ void hardware_interfaces::RoombaSystemHardware::get_button_status()
     buttons_[5] = robot_->isMinButtonPressed();
     buttons_[6] = robot_->isDockButtonPressed();
     buttons_[7] = robot_->isSpotButtonPressed();
+}
+
+void hardware_interfaces::RoombaSystemHardware::get_cliff_status()
+{
+    cliff_sensors_[0] = robot_->isCliffLeft();
+    cliff_sensors_[1] = robot_->isCliffFrontLeft();
+    cliff_sensors_[2] = robot_->isCliffRight();
+    cliff_sensors_[3] = robot_->isCliffFrontRight();
+}
+
+void hardware_interfaces::RoombaSystemHardware::get_wheel_drop_status()
+{
+    wheel_drop_[0] = robot_->isLeftWheeldrop();
+    wheel_drop_[1] = robot_->isRightWheeldrop();
 }
 
 } // end of hardware_interfaces::RoombaSystemHardware

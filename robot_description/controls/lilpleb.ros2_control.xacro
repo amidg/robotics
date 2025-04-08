@@ -76,6 +76,18 @@
         <state_interface name="current"/>
         <state_interface name="temperature"/>
       </sensor>
+      <!-- Cliff -->
+      <sensor name="cliff">
+        <state_interface name="left"/>
+        <state_interface name="front_left"/>
+        <state_interface name="right"/>
+        <state_interface name="front_right"/>
+      </sensor>
+      <!-- Wheel Drop -->
+      <sensor name="wheeldrop">
+        <state_interface name="left"/>
+        <state_interface name="right"/>
+      </sensor>
     </ros2_control>
   </xacro:macro>
 
