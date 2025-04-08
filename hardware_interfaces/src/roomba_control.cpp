@@ -304,23 +304,39 @@ hardware_interface::return_type hardware_interfaces::RoombaSystemHardware::write
 {
   std::stringstream ss;
   //ss << "Writing commands:";
+  // record values from the interface
+  
 
-  // LEDs
+  // write values
   for (const auto & [name, descr] : gpio_command_interfaces_)
   {
-    //std::string command = std::to_string(get_command(name));
-    //ss << "LED " << name << " command " << command << std::endl;
+    std::string cmd_name{name};
+    // Cleaning Motors
+    if (cmd_name.find("cleaning_motors") != std::string::npos) {
+        robot_->setAllMotors(
+            // main [-1, 1]
+            (cmd_name.find("main") != std::string::npos) ? get_command(cmd_name) : 0.0,
+            // side [-1, 1]
+            (cmd_name.find("side") != std::string::npos) ? get_command(cmd_name) : 0.0,
+            // vacuum [0, 1]
+            (cmd_name.find("vacuum") != std::string::npos) ? get_command(cmd_name) : 0.0
+        );
+    }
 
-    if (name == "status_leds/power_led")
-        robot_->setPowerLED((get_command(name)>0));
-    else if (name == "status_leds/dock_led")
-        robot_->enableDockLED((get_command(name)>0));
-    else if (name == "status_leds/debris_led")
-        robot_->enableDebrisLED((get_command(name)>0));
-    else if (name == "status_leds/check_led")
-        robot_->enableCheckRobotLED((get_command(name)>0));
-    else if (name == "status_leds/spot_led")
-        robot_->enableSpotLED((get_command(name)>0));
+    // LEDs
+    if (cmd_name.find("status_leds") != std::string::npos) {
+        if (cmd_name.find("power") != std::string::npos)
+            robot_->setPowerLED((get_command(name)>0));
+        else if (cmd_name.find("dock") != std::string::npos)
+            robot_->enableDockLED((get_command(name)>0));
+        else if (cmd_name.find("debris") != std::string::npos)
+            robot_->enableDebrisLED((get_command(name)>0));
+        else if (cmd_name.find("check") != std::string::npos)
+            robot_->enableCheckRobotLED((get_command(name)>0));
+        else if (cmd_name.find("spot") != std::string::npos)
+            robot_->enableSpotLED((get_command(name)>0));
+    }
+    
   }
 
   //for (const auto & [name, descr] : joint_command_interfaces_)

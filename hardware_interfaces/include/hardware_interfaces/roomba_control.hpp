@@ -54,6 +54,9 @@ private:
   std::string serial_port_;
   int serial_baud_;
 
+  // cleaning motors: main, side, vacuum
+  float cleaning_motors_[3] = {0.0};
+
   // buttons
   bool buttons_[8] = {false};
 
@@ -75,7 +78,7 @@ private:
   bool cliff_sensors_[4] = {false};
   bool wheel_drop_[2] = {false};
 
-  // functions
+  // sensor functions
   void get_bumper_readings();
   void get_battery_status();
   void get_button_status();

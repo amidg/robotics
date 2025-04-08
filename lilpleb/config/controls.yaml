@@ -72,6 +72,7 @@ gpio_controller:
       - battery
       - cliff
       - wheeldrop
+      - cleaning_motors 
     command_interfaces:
       status_leds:
         - interfaces:
@@ -80,6 +81,11 @@ gpio_controller:
           - dock_led
           - check_led
           - power_led
+      cleaning_motors:
+        - interfaces:
+          - main_motor
+          - side_motor
+          - vacuum_motor
     state_interfaces:
       buttons:
         - interfaces:

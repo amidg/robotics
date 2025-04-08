@@ -28,7 +28,13 @@
         <state_interface name="position"/>
         <state_interface name="velocity"/>
       </joint>
-      <!-- GPIO -->
+      <!-- Cleaning Motors -->
+      <gpio name="cleaning_motors">
+        <command_interface name="main_motor"/>
+        <command_interface name="side_motor"/>
+        <command_interface name="vacuum_motor"/>
+      </gpio>
+      <!-- LEDs -->
       <gpio name="status_leds">
         <command_interface name="debris_led"/>
         <command_interface name="spot_led"/>
@@ -36,6 +42,7 @@
         <command_interface name="check_led"/>
         <command_interface name="power_led"/>
       </gpio>
+      <!-- Buttons -->
       <gpio name="buttons">
         <state_interface name="clean_button"/>
         <state_interface name="clock_button"/>
