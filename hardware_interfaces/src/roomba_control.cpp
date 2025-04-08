@@ -182,19 +182,17 @@ hardware_interface::return_type RoombaSystemHardware::read(
   // Wheel states
   for (const auto & [name, descr] : joint_state_interfaces_) {
       //ss << descr.get_prefix_name() << "/" << descr.get_interface_name() << std::endl;
-
-      //if (descr.get_interface_name() == hardware_interface::HW_IF_POSITION)
-      //{
-      //  // Simulate DiffBot wheels's movement as a first-order system
-      //  // Update the joint status: this is a revolute joint without any limit.
-      //  // Simply integrates
-      //  auto velo = get_command(descr.get_prefix_name() + "/" + hardware_interface::HW_IF_VELOCITY);
-      //  set_state(name, get_state(name) + period.seconds() * velo);
-
-      //  //ss << std::endl
-      //  //   << "\t position " << get_state(name) << " and velocity " << velo << " for '" << name
-      //  //   << "'!";
-      //}
+      if (name.find("left") != std::string::npos) {
+          if (name.find("position") != std::string::npos)
+              set_state(name, robot_->getLeftWheelDistance());
+          else if (name.find("velocity") != std::string::npos)
+              set_state(name, robot_->getMeasuredLeftWheelVel());
+      } else if (name.find("right") != std::string::npos) {
+          if (name.find("position") != std::string::npos)
+              set_state(name, robot_->getRightWheelDistance());
+          else if (name.find("velocity") != std::string::npos)
+              set_state(name, robot_->getMeasuredRightWheelVel());
+      }
   }
 
   // report GPIOs
@@ -309,25 +307,11 @@ hardware_interface::return_type hardware_interfaces::RoombaSystemHardware::write
   // write values for the joints
   for (const auto & [name, descr] : joint_command_interfaces_)
   {
-    // left
     if (name.find("left") != std::string::npos) {
         drive_motors_[0] = get_command(name);
     } else if (name.find("right") != std::string::npos) {
         drive_motors_[1] = get_command(name);
     }
-    // left/right_wheel_joint/velocity
-    //ss << descr.get_prefix_name() << "/" << descr.get_interface_name()
-    //ss << name
-    //   << ": " << std::to_string(get_command(name))
-    //   << std::endl;
-
-    
-
-    // Simulate sending commands to the hardware
-    //set_state(name, get_command(name));
-
-    //ss << std::fixed << std::setprecision(2) << std::endl
-    //   << "\t" << "command " << get_command(name) << " for '" << name << "'!";
   }
 
   // set wheel speed
