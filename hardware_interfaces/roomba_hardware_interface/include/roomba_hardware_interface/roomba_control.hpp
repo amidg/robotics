@@ -3,8 +3,7 @@
 
 #include <memory>
 #include <string>
-#include <vector>
-#include <mutex>
+#include <unordered_map>
 
 #include "hardware_interface/handle.hpp"
 #include "hardware_interface/hardware_info.hpp"
@@ -55,39 +54,43 @@ private:
   int serial_baud_;
 
   // drive motors [left, right]
-  float drive_motors_[2] = {0.0};
+  std::unordered_map<std::string, float> drive_motors_;
 
-  // cleaning motors [main, side, vacuum]
-  float cleaning_motors_[3] = {0.0};
+  /*
+   * GPIOs from the hardware interface description:
+   * - cleaning motors [main, side, vacuum]
+   * - buttons [clean, clock, schedule, day, hour, minute, dock, spot]
+   * - status_leds [debris, spot, dock, check, power]
+   */
+  std::unordered_map<std::string, float> cleaning_motors_;
+  std::unordered_map<std::string, bool> buttons_;
+  std::unordered_map<std::string, bool> status_leds_;
 
-  // buttons
-  bool buttons_[8] = {false};
+  /*
+   * Sensors from the hardware interface description:
+   * - light_bumpers_ (left, front_left, center_left, center_right, front_right, right)
+   * - light_signals_ (left, front_left, center_left, center_right, front_right, right)
+   * - static_bumpers_ (left, right)
+   * - battery_ (capacity, charge, state, voltage, current, temperature)
+   * - cliff_sensors_ (left, front_left, right, front_right)
+   * - wheel_drop_ (left, right)
+   */
+  std::unordered_map<std::string, bool> light_bumpers_;
+  std::unordered_map<std::string, int> light_signals_;
+  std::unordered_map<std::string, bool> static_bumpers_;
+  std::unordered_map<std::string, float> battery_;
+  std::unordered_map<std::string, bool> cliff_;
+  std::unordered_map<std::string, bool> wheeldrop_;
 
-  // sensors
-  //std::mutex bumper_mtx_;
-  bool static_bumpers_[2] = {false};
-  bool light_bumpers_[6] = {false};
-  int light_signals_[6] = {0};
-
-  // battery
-  float battery_capacity_;
-  float battery_charge_;
-  float battery_percent_;
-  float battery_voltage_;
-  float battery_current_;
-  int battery_temperature_;
-
-  // cliff sensors
-  bool cliff_sensors_[4] = {false};
-  bool wheel_drop_[2] = {false};
-
-  // sensor functions
+  /*
+   * Sensors functions
+   */
   void get_bumper_readings();
   void get_battery_status();
   void get_button_status();
   void get_cliff_status();
-  void get_wheel_drop_status();
-};
+  void get_wheeldrop_status();
+}; // class RoombaSystemHardware
 
 }  // namespace hardware_interfaces
 
