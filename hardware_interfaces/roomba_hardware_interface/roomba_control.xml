@@ -1,4 +1,4 @@
-<library path="hardware_interfaces">
+<library path="roomba_hardware_interface">
   <class name="hardware_interfaces/RoombaSystemHardware"
          type="hardware_interfaces::RoombaSystemHardware"
          base_class_type="hardware_interface::SystemInterface">
