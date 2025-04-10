@@ -118,8 +118,7 @@ hardware_interface::CallbackReturn RoombaSystemHardware::on_init(
             }
         }
     }
-    
-    
+
     return hardware_interface::CallbackReturn::SUCCESS;
 }
 
