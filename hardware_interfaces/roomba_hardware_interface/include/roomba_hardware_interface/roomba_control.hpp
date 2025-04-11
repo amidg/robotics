@@ -65,6 +65,7 @@ private:
   std::unordered_map<std::string, float> cleaning_motors_;
   std::unordered_map<std::string, bool> buttons_;
   std::unordered_map<std::string, bool> status_leds_;
+  create::CreateMode system_mode_ = create::MODE_FULL;
 
   /*
    * Sensors from the hardware interface description:

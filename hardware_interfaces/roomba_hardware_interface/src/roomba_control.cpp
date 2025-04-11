@@ -51,15 +51,6 @@ hardware_interface::CallbackReturn RoombaSystemHardware::on_init(
             std::cout << interface_name << std::endl;
             drive_motors_[interface_name] = {};
         }
-
-        // states
-        //for (const hardware_interface::InterfaceInfo& interface : joint.state_interfaces) {
-        //    interface_name += ("/" + interface.name);
-        //    if (interface.name == "position")
-        //        drive_motors_state_odom_[interface.name] = {};
-        //    else if (interface.name == "velocity")
-        //        drive_motors_state_vel_[interface_name] = {};
-        //}
     }
 
     // gpios
@@ -129,7 +120,7 @@ hardware_interface::CallbackReturn RoombaSystemHardware::on_configure(
     RCLCPP_INFO(get_logger(), "Connecting to the Roomba");
     if (robot_->connect(serial_port_, serial_baud_)) {
       RCLCPP_INFO(get_logger(), "Connected to the robot!");
-      robot_->setMode(create::MODE_FULL);
+      robot_->setMode(system_mode_);
       RCLCPP_INFO(get_logger(), "Robot mode is set");
     } else {
       RCLCPP_INFO(get_logger(), "Failed to connect to the robot!");
@@ -217,6 +208,10 @@ hardware_interface::return_type RoombaSystemHardware::read(
         // Buttons
         if (descr.get_prefix_name() == "buttons")
             set_state(name, buttons_[name]);
+
+        // mode
+        if (descr.get_prefix_name() == "docking")
+            set_state(name, static_cast<int>(system_mode_));
     }
 
     // Sensors
@@ -261,6 +256,18 @@ hardware_interface::return_type hardware_interfaces::RoombaSystemHardware::write
 
   // write values for GPIO
   for (const auto & [name, descr] : gpio_command_interfaces_) {
+    // system mode
+    if (descr.get_prefix_name() == "docking") {
+        create::CreateMode new_mode = static_cast<create::CreateMode>(get_command(name));
+        // cannot allow to turn off robot with 0
+        if (system_mode_ != new_mode && new_mode != 0) {
+            system_mode_ = new_mode;
+            robot_->setMode(system_mode_);
+            if (system_mode_ == create::MODE_PASSIVE)
+                robot_->dock();
+        }
+    }
+
     // Cleaning Motors
     if (descr.get_prefix_name() == "cleaning_motors") {
         robot_->setAllMotors(

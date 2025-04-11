@@ -73,7 +73,11 @@ gpio_controller:
       - cliff
       - wheeldrop
       - cleaning_motors 
+      - docking
     command_interfaces:
+      docking:
+        - interfaces:
+          - set_mode
       status_leds:
         - interfaces:
           - debris_led
@@ -87,6 +91,9 @@ gpio_controller:
           - side_motor
           - vacuum_motor
     state_interfaces:
+      docking:
+        - interfaces:
+          - current_mode
       buttons:
         - interfaces:
           - clean_button
