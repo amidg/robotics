@@ -1,32 +1,113 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-
-  <xacro:macro name="lilpleb_diff_controller" params="name prefix use_mock_hardware">
-    <ros2_control name="${name}" type="system">
-      <xacro:unless value="${use_mock_hardware}">
-        <hardware>
-          <plugin>hardware_interfaces/RoombaSystemHardware</plugin>
-          <param name="example_param_hw_start_duration_sec">0</param>
-          <param name="example_param_hw_stop_duration_sec">3.0</param>
-        </hardware>
-      </xacro:unless>
-      <xacro:if value="${use_mock_hardware}">
-        <hardware>
-          <plugin>mock_components/GenericSystem</plugin>
-          <param name="calculate_dynamics">true</param>
-        </hardware>
-      </xacro:if>
-      <joint name="${prefix}left_wheel_joint">
-        <command_interface name="velocity"/>
-        <state_interface name="position"/>
-        <state_interface name="velocity"/>
-      </joint>
-      <joint name="${prefix}right_wheel_joint">
-        <command_interface name="velocity"/>
-        <state_interface name="position"/>
-        <state_interface name="velocity"/>
-      </joint>
-    </ros2_control>
-  </xacro:macro>
-
+    <xacro:macro name="lilpleb_controls_interface" params="
+        name
+        prefix:=''
+        model:=create_2
+        serial_port:=/dev/ttyUSB0
+        serial_baud:=115200
+        use_mock_hardware:=false">
+        <ros2_control name="${name}" type="system">
+            <xacro:unless value="${use_mock_hardware}">
+              <hardware>
+                <plugin>hardware_interfaces/RoombaSystemHardware</plugin>
+                <param name="roomba_model">${model}</param>
+                <param name="roomba_serial_port">${serial_port}</param>
+                <param name="roomba_serial_baud">${serial_baud}</param>
+              </hardware>
+            </xacro:unless>
+            <xacro:if value="${use_mock_hardware}">
+              <hardware>
+                <plugin>mock_components/GenericSystem</plugin>
+                <param name="calculate_dynamics">true</param>
+              </hardware>
+            </xacro:if>
+            <!-- Joints -->
+            <joint name="${prefix}left_wheel_joint">
+              <command_interface name="velocity"/>
+              <state_interface name="position"/>
+              <state_interface name="velocity"/>
+            </joint>
+            <joint name="${prefix}right_wheel_joint">
+              <command_interface name="velocity"/>
+              <state_interface name="position"/>
+              <state_interface name="velocity"/>
+            </joint>
+            <!-- Give control to user -->
+            <gpio name="docking">
+                <command_interface name="set_mode">
+                    <param name="min">1</param> <!-- create::MODE_PASSIVE, docking -->
+                    <param name="max">3</param> <!-- create::MODE_FULL, user control -->
+                </command_interface>
+                <state_interface name="current_mode"/>
+            </gpio>
+            <!-- Cleaning Motors -->
+            <gpio name="cleaning_motors">
+                <command_interface name="main_motor"/>
+                <command_interface name="side_motor"/>
+                <command_interface name="vacuum_motor"/>
+            </gpio>
+            <!-- LEDs -->
+            <gpio name="status_leds">
+                <command_interface name="debris_led"/>
+                <command_interface name="spot_led"/>
+                <command_interface name="dock_led"/>
+                <command_interface name="check_led"/>
+                <command_interface name="power_led"/>
+            </gpio>
+            <!-- Buttons -->
+            <gpio name="buttons">
+                <state_interface name="clean_button"/>
+                <state_interface name="clock_button"/>
+                <state_interface name="schedule_button"/>
+                <state_interface name="day_button"/>
+                <state_interface name="hour_button"/>
+                <state_interface name="minute_button"/>
+                <state_interface name="dock_button"/>
+                <state_interface name="spot_button"/>
+            </gpio>
+            <!-- Bumper Light Sensors -->
+            <sensor name="bumper_light_sensors_bool">
+                <state_interface name="is_light_left"/>
+                <state_interface name="is_light_front_left"/>
+                <state_interface name="is_light_center_left"/>
+                <state_interface name="is_light_center_right"/>
+                <state_interface name="is_light_front_right"/>
+                <state_interface name="is_light_right"/>
+            </sensor>
+            <sensor name="bumper_light_sensors_raw">
+                <state_interface name="light_left"/>
+                <state_interface name="light_front_left"/>
+                <state_interface name="light_center_left"/>
+                <state_interface name="light_center_right"/>
+                <state_interface name="light_front_right"/>
+                <state_interface name="light_right"/>
+            </sensor>
+            <sensor name="bumper_light_sensors_static">
+                <state_interface name="is_left"/>
+                <state_interface name="is_right"/>
+            </sensor>
+            <!-- Battery -->
+            <sensor name="battery">
+                <state_interface name="capacity"/>
+                <state_interface name="charge"/>
+                <state_interface name="state"/>
+                <state_interface name="voltage"/>
+                <state_interface name="current"/>
+                <state_interface name="temperature"/>
+            </sensor>
+            <!-- Cliff -->
+            <sensor name="cliff">
+                <state_interface name="left"/>
+                <state_interface name="front_left"/>
+                <state_interface name="right"/>
+                <state_interface name="front_right"/>
+            </sensor>
+            <!-- Wheel Drop -->
+            <sensor name="wheeldrop">
+                <state_interface name="left"/>
+                <state_interface name="right"/>
+            </sensor>
+        </ros2_control>
+    </xacro:macro>
 </robot>

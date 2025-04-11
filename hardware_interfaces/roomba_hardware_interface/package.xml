@@ -1,11 +1,9 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>hardware_interfaces</name>
+  <name>roomba_hardware_interface</name>
   <version>0.1.0</version>
-  <description>
-          ROS2 control compatible interfaces for my custom robots
-  </description>
+  <description>ROS2 Control hardware interface wrapper for libcreate</description>
   <author email="dmitrii@gusev.tech">Dmitrii Gusev</author>
   <maintainer email="dmitrii@gusev.tech">Dmitrii Gusev</maintainer>
   <license>GPL-3</license>
@@ -21,14 +19,6 @@
 
   <exec_depend>controller_manager</exec_depend>
   <exec_depend>diff_drive_controller</exec_depend>
-
-  <!--
-  <test_depend>ament_cmake_pytest</test_depend>
-  <test_depend>launch_testing</test_depend>
-  <test_depend>launch</test_depend>
-  <test_depend>liburdfdom-tools</test_depend>
-  <test_depend>rclpy</test_depend>
-  -->
 
   <export>
     <build_type>ament_cmake</build_type>

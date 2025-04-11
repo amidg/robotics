@@ -12,9 +12,12 @@
 
   <!-- ROS2 Control -->
   <xacro:include filename="$(find robot_description)/controls/lilpleb.ros2_control.xacro" />
-  <xacro:lilpleb_diff_controller
+  <xacro:lilpleb_controls_interface
       name="LilPlebBase"
       prefix="$(arg prefix)"
+      model="create_2"
+      serial_port="/dev/ttyUSB0"
+      serial_baud="115200"
       use_mock_hardware="$(arg use_mock_hardware)"/>
 
 </robot>

@@ -7,12 +7,13 @@
   <maintainer email="root@todo.todo">root</maintainer>
   <license>TODO: License declaration</license>
 
-  <exec_depend>hardware_interfaces</exec_depend>
+  <exec_depend>roomba_hardware_interface</exec_depend>
   <exec_depend>robot_description</exec_depend>
   <exec_depend>teleoperator</exec_depend>
 
   <exec_depend>controller_manager</exec_depend>
   <exec_depend>diff_drive_controller</exec_depend>
+  <exec_depend>gpio_controller</exec_depend>
   <exec_depend>joint_state_broadcaster</exec_depend>
   <exec_depend>joint_state_publisher_gui</exec_depend>
   <exec_depend>robot_state_publisher</exec_depend>

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(hardware_interfaces LANGUAGES CXX)
+project(roomba_hardware_interface LANGUAGES CXX)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "(GNU|Clang)")
   add_compile_options(-Wall -Wextra)
@@ -34,35 +34,36 @@ endforeach()
 
 ## COMPILE
 add_library(
-  hardware_interfaces
+  ${PROJECT_NAME}
   SHARED
   src/roomba_control.cpp
 )
-target_compile_features(hardware_interfaces PUBLIC cxx_std_17)
-target_include_directories(hardware_interfaces
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
+target_include_directories(${PROJECT_NAME}
   PUBLIC
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include/hardware_interfaces>
+    $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
 )
 ament_target_dependencies(
-  hardware_interfaces PUBLIC
+  ${PROJECT_NAME} PUBLIC
   ${THIS_PACKAGE_INCLUDE_DEPENDS}
 )
 
 # Export hardware plugins
 pluginlib_export_plugin_description_file(
   hardware_interface
-  system_interfaces/roomba_control.xml
+  roomba_control.xml
 )
 
 # INSTALL
 install(
   DIRECTORY include/
-  DESTINATION include/hardware_interfaces
+  DESTINATION include/${PROJECT_NAME}
 )
 
-install(TARGETS hardware_interfaces
-  EXPORT export_hardware_interfaces
+set(EXRORT_NAME export_${PROJECT_NAME})
+install(TARGETS ${PROJECT_NAME}
+  EXPORT ${EXPORT_NAME}
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
@@ -76,6 +77,6 @@ if(BUILD_TESTING)
 endif()
 
 ## EXPORTS
-ament_export_targets(export_hardware_interfaces HAS_LIBRARY_TARGET)
+ament_export_targets(${EXPORT_NAME} HAS_LIBRARY_TARGET)
 ament_export_dependencies(${THIS_PACKAGE_INCLUDE_DEPENDS})
 ament_package()
