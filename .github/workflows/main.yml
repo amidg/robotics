@@ -1,0 +1,26 @@
+name: Build robotics infrastructure
+
+# Trigger this workflow on pushes to any branch and tags matching v*.*.*
+on:
+  push:
+    branches: [ '*' ]
+    tags: [ 'v*.*.*' ]
+
+jobs:
+  # Build generic ROS2 container
+  base_ros2_amd64:
+    uses: amidg/workflows/.github/workflows/build-docker-and-push.yml@main
+    strategy:
+      matrix:
+        container:
+          - name: ros2
+            path: containers
+            file: Containerfile
+    with:
+      container_name: ${{ matrix.container.name }}
+      container_path: ${{ matrix.container.path }}
+      container_file: ${{ matrix.container.file }}
+      container_tag:  ${{ github.sha }}
+      runner: ubuntu-24.04
+    secrets:
+      CONTAINER_TOKEN: ${{ secrets.CONTAINER_TOKEN }}
