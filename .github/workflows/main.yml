@@ -16,3 +16,20 @@ jobs:
       container_tag:  ${{ github.sha }}
     secrets:
       CONTAINER_TOKEN: ${{ secrets.CONTAINER_TOKEN }}
+
+  # build controls runtime
+  build_controls_runtime:
+    uses: amidg/workflows/.github/workflows/build_docker_multiarch.yml@main
+    needs:
+      - build_ros2_base
+    with:
+      container_name: ros2_controls_runtime
+      container_file: containers/Containerfile
+      container_tag:  ${{ github.sha }}
+      build_target: runtime
+      build_args: |
+        GITHUB_SHA=${{ github.sha }}
+    secrets:
+      CONTAINER_TOKEN: ${{ secrets.CONTAINER_TOKEN }}
+
+
