@@ -5,9 +5,13 @@ SHELL ["/bin/bash", "-c"]
 ENV ROS_DISTRO=${ROS_DISTRO}
 
 # remove incoming ubuntu user
+# add additional groups
 ENV DEFAULT_USER="ubuntu"
-RUN userdel -r "$DEFAULT_USER" && \
-    rm -rf /home/$DEFAULT_USER
+RUN echo "Removing default user" && \
+    userdel -r "$DEFAULT_USER" && \
+    rm -rf /home/$DEFAULT_USER && \
+    echo "Adding groups" && \
+    groupadd -f realtime dialout
 
 # set main env variables
 ENV DEBIAN_FRONTEND=noninteractive
