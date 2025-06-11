@@ -23,3 +23,19 @@ jobs:
       runner: ubuntu-24.04
     secrets:
       CONTAINER_TOKEN: ${{ secrets.CONTAINER_TOKEN }}
+
+  base_ros2_arm64:
+    uses: amidg/workflows/.github/workflows/build-docker-and-push.yml@main
+    strategy:
+      matrix:
+        container:
+          - name: ros2
+            path: containers
+            file: Containerfile
+    with:
+      container_name: ${{ matrix.container.name }}
+      container_file: ${{ matrix.container.path }}/${{ matrix.container.file }}
+      container_tag:  ${{ github.sha }}
+      runner: ubuntu-24.04-arm
+    secrets:
+      CONTAINER_TOKEN: ${{ secrets.CONTAINER_TOKEN }}
