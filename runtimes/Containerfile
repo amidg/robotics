@@ -1,0 +1,44 @@
+# TODO: implement simpler layering with only package.xml
+# get alpine image for that
+# copy all package.xml only
+
+# runtime container
+ARG GITHUB_SHA=latest
+ARG RUNTIME_TYPE=controls
+FROM ghcr.io/amidg/ros2:$GITHUB_SHA AS runtime
+ARG RUNTIME_TYPE
+ENV RUNTIME=${RUNTIME_TYPE}_runtime
+
+# copy only package.xml to keep clean cache
+WORKDIR /app
+COPY runtimes/${RUNTIME}/package.xml src/${RUNTIME}/package.xml
+
+# install controls runtime dependencies
+RUN apt update && \
+    rosdep update --rosdistro ${ROS_DISTRO} && \
+    PIP_BREAK_SYSTEM_PACKAGES=1 rosdep install --from-paths src \
+    --ignore-src --rosdistro=${ROS_DISTRO} -y -r && \
+    rm -rf /app
+ENTRYPOINT ["bash"]
+
+
+###########################################
+# dev container
+ARG RUNTIME_TYPE=controls
+FROM runtime AS dev
+ARG RUNTIME_TYPE
+ENV RUNTIME=${RUNTIME_TYPE}_dev
+
+# copy only package.xml to keep clean cache
+WORKDIR /app
+COPY runtimes/${RUNTIME}/package.xml src/${RUNTIME}/package.xml
+
+ENV RUNTIME=$RUNTIME
+COPY runtimes/${RUNTIME} /app/src
+# install controls runtime dependencies
+RUN apt update && \
+    rosdep update --rosdistro ${ROS_DISTRO} && \
+    PIP_BREAK_SYSTEM_PACKAGES=1 rosdep install --from-paths src \
+    --ignore-src --rosdistro=${ROS_DISTRO} -y -r && \
+    rm -rf /app
+CMD [""]
