@@ -11,7 +11,8 @@ RUN echo "Removing default user" && \
     userdel -r "$DEFAULT_USER" && \
     rm -rf /home/$DEFAULT_USER && \
     echo "Adding groups" && \
-    groupadd -f realtime dialout
+    groupadd -f realtime && \
+    groupadd -f dialout
 
 # set main env variables
 ENV DEBIAN_FRONTEND=noninteractive
