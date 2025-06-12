@@ -37,7 +37,7 @@ endforeach()
 install(
   DIRECTORY
     launch
-    meshes
+    #meshes
     urdf
     controls
   DESTINATION share/robot_description

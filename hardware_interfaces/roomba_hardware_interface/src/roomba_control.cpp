@@ -180,6 +180,7 @@ hardware_interface::CallbackReturn RoombaSystemHardware::on_deactivate(
 
 hardware_interface::return_type RoombaSystemHardware::read(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & period) {
+    (void)period;
     // Read sensors
     get_battery_status();
     get_bumper_readings();
@@ -192,14 +193,14 @@ hardware_interface::return_type RoombaSystemHardware::read(
         //ss << descr.get_prefix_name() << "/" << descr.get_interface_name() << std::endl;
         if (name.find("left") != std::string::npos) {
             if (name.find("position") != std::string::npos)
-                set_state(name, robot_->getLeftWheelDistance());
+                set_state(name, static_cast<double>(robot_->getLeftWheelDistance()));
             else if (name.find("velocity") != std::string::npos)
-                set_state(name, robot_->getMeasuredLeftWheelVel());
+                set_state(name, static_cast<double>(robot_->getMeasuredLeftWheelVel()));
         } else if (name.find("right") != std::string::npos) {
             if (name.find("position") != std::string::npos)
-                set_state(name, robot_->getRightWheelDistance());
+                set_state(name, static_cast<double>(robot_->getRightWheelDistance()));
             else if (name.find("velocity") != std::string::npos)
-                set_state(name, robot_->getMeasuredRightWheelVel());
+                set_state(name, static_cast<double>(robot_->getMeasuredRightWheelVel()));
         }
     }
 
@@ -211,7 +212,7 @@ hardware_interface::return_type RoombaSystemHardware::read(
 
         // mode
         if (descr.get_prefix_name() == "docking")
-            set_state(name, static_cast<int>(system_mode_));
+            set_state(name, static_cast<double>(system_mode_));
     }
 
     // Sensors
@@ -226,13 +227,13 @@ hardware_interface::return_type RoombaSystemHardware::read(
 
         // Battery
         if (descr.get_prefix_name() == "battery")
-            set_state(name, battery_[name]);
+            set_state(name, static_cast<double>(battery_[name]));
 
         // Bumper Light Sensors
         if (descr.get_prefix_name() == "bumper_light_sensors_bool")
             set_state(name, light_bumpers_[name]);
         else if (descr.get_prefix_name() == "bumper_light_sensors_raw")
-            set_state(name, light_signals_[name]);
+            set_state(name, static_cast<double>(light_signals_[name]));
         else if (descr.get_prefix_name() == "bumper_light_sensors_static")
             set_state(name, static_bumpers_[name]);
     }
