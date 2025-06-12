@@ -17,36 +17,28 @@ jobs:
     secrets:
       CONTAINER_TOKEN: ${{ secrets.CONTAINER_TOKEN }}
 
-  # build controls runtime
-  build_controls_runtime:
-    uses: amidg/workflows/.github/workflows/build_docker_multiarch.yml@main
+  # build controls contains two jobs:
+  # - runtime (deployment)
+  # - dev image
+  build_controls:
     needs:
       - build_ros2_base
-    with:
-      container_name: ros2_controls_runtime
-      container_file: runtimes/Containerfile
-      container_tag:  ${{ github.sha }}
-      build_target: runtime
-      build_args: |
-        GITHUB_SHA=${{ github.sha }}
-        RUNTIME=controls_runtime
-    secrets:
-      CONTAINER_TOKEN: ${{ secrets.CONTAINER_TOKEN }}
-
-  # build controls dev 
-  build_controls_dev:
     uses: amidg/workflows/.github/workflows/build_docker_multiarch.yml@main
-    needs:
-      - build_ros2_base
+    strategy:
+      matrix:
+        include:
+          - container_name: ros2_controls_runtime
+            build_target: runtime
+          - container_name: ros2_controls_dev
+            build_target: dev
     with:
-      container_name: ros2_controls_dev
+      container_name: ${{ matrix.container_name }}
       container_file: runtimes/Containerfile
-      container_tag:  ${{ github.sha }}
-      build_target: dev
+      container_tag: ${{ github.ref == 'refs/heads/main' && 'latest' || github.sha }}
+      build_target: ${{ matrix.build_target }}
       build_args: |
-        GITHUB_SHA=${{ github.sha }}
+        GITHUB_SHA=${{ github.ref == 'refs/heads/main' && 'latest' || github.sha }}
         RUNTIME=controls
     secrets:
       CONTAINER_TOKEN: ${{ secrets.CONTAINER_TOKEN }}
-
 
