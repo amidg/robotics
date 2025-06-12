@@ -63,8 +63,9 @@ private:
    * - status_leds [debris, spot, dock, check, power]
    */
   std::unordered_map<std::string, float> cleaning_motors_;
-  std::unordered_map<std::string, bool> buttons_;
-  std::unordered_map<std::string, bool> status_leds_;
+  std::unordered_map<std::string, double> buttons_;
+  //std::unordered_map<std::string, bool> buttons_;
+  std::unordered_map<std::string, double> status_leds_;
   create::CreateMode system_mode_ = create::MODE_FULL;
 
   /*
@@ -76,12 +77,12 @@ private:
    * - cliff_sensors_ (left, front_left, right, front_right)
    * - wheel_drop_ (left, right)
    */
-  std::unordered_map<std::string, bool> light_bumpers_;
+  std::unordered_map<std::string, double> light_bumpers_;
   std::unordered_map<std::string, int> light_signals_;
-  std::unordered_map<std::string, bool> static_bumpers_;
+  std::unordered_map<std::string, double> static_bumpers_;
   std::unordered_map<std::string, float> battery_;
-  std::unordered_map<std::string, bool> cliff_;
-  std::unordered_map<std::string, bool> wheeldrop_;
+  std::unordered_map<std::string, double> cliff_;
+  std::unordered_map<std::string, double> wheeldrop_;
 
   /*
    * Sensors functions
