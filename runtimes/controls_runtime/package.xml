@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>controls_runtime</name>
+  <version>0.0.1</version>
+  <description>Core runtime for controls deployment</description>
+  <author email="dmitrii@gusev.tech">Dmitrii Gusev</author>
+  <maintainer email="dmitrii@gusev.tech">Dmitrii Gusev</maintainer>
+  <license>GNU Public License 3</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- Build / runtime support -->
+  <depend>ament_index_cpp</depend>
+  <depend>ros2launch</depend>
+  <depend>pluginlib</depend>
+  <depend>rclcpp</depend>
+  <depend>rclcpp_lifecycle</depend>
+  <depend>rclcpp_components</depend>
+  <depend>generate_parameter_library</depend>
+
+  <!-- ros2 control -->
+  <depend>ros2controlcli</depend>
+  <depend>controller_interface</depend>
+  <depend>controller_manager</depend>
+  <depend>controller_manager_msgs</depend>
+  <depend>hardware_interface</depend>
+  <depend>joint_limits</depend>
+  <depend>ros2_control_test_assets</depend>
+  <depend>ros2_controllers</depend>
+  <depend>realtime_tools</depend>
+
+  <!-- msgs -->
+  <depend>control_msgs</depend>
+  <depend>lifecycle_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>std_srvs</depend>
+  <depend>tf2_geometry_msgs</depend>
+  <depend>tf2_ros</depend>
+  <depend>trajectory_msgs</depend>
+
+  <!-- misc -->
+  <depend>urdf</depend>
+  <depend>urdfdom_py</depend>
+  <depend>pal_statistics</depend>
+  <depend>tf_transformations</depend>
+  <depend>python3-yaml</depend>
+  <depend>python3-numpy</depend>
+  <depend>python3-scipy</depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

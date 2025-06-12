@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>controls_dev</name>
+  <version>0.0.1</version>
+  <description>Runtime for controls development</description>
+  <author email="dmitrii@gusev.tech">Dmitrii Gusev</author>
+  <maintainer email="dmitrii@gusev.tech">Dmitrii Gusev</maintainer>
+  <license>GNU Public License 3</license>
+
+  <depend>controls_runtime</depend>
+  <depend>git</depend>
+  <depend>git-lfs</depend>
+  <depend>tmux</depend>
+  <depend>vim</depend>
+  <depend>xterm</depend>
+  <depend>rviz2</depend>
+
+  <!-- ros2 packages -->
+  <depend>ros2_control_demos</depend>
+  <!-- gazebo packages
+  Keep this commented out until I figure out things
+  <depend>gazebo_ros2_control</depend>
+  <depend>gazebo_ros2_control_demos</depend>
+  <depend>gz_ros2_control</depend>
+  <depend>gz_ros2_control_demos</depend>
+  <depend>gazebo_ros_pkgs</depend>
+  -->
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

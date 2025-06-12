@@ -19,7 +19,7 @@ services:
     <<: *base
     profiles:
       - dev
-    image: ghcr.io/amidg/ros2:latest
+    image: ghcr.io/amidg/ros2_controls_dev:latest
     container_name: ros_dev
     network_mode: host
     environment:
@@ -42,7 +42,7 @@ services:
     extends:
       file: ./containers/dockerfiles/base.yml
       service: base_security
-    image: ghcr.io/amidg/ros2:latest
+    image: ghcr.io/amidg/ros2_controls_dev:latest
     container_name: hardware_dev
     network_mode: host
     environment:
